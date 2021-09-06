@@ -120,6 +120,7 @@ class Controls extends FlxActionSet
 
 	public var gamepadsAdded:Array<Int> = [];
 	public var keyboardScheme = KeyboardScheme.None;
+	var plsDFJK:Bool = FlxG.save.data.dfjk;
 
 	public var UP(get, never):Bool;
 
@@ -489,7 +490,8 @@ class Controls extends FlxActionSet
 
 	public function setKeyboardScheme(scheme:KeyboardScheme, reset = true)
 	{
-		if (reset)
+		loadKeyBinds();
+		 /*if (reset)
 			removeKeyboard();
 
 		keyboardScheme = scheme;
@@ -498,23 +500,23 @@ class Controls extends FlxActionSet
 		switch (scheme)
 		{
 			case Solo:
-				inline bindKeys(Control.UP, [W, FlxKey.UP]);
-				inline bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
-				inline bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
-				inline bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
+				inline bindKeys(Control.UP, [FlxKey.fromString("W"), FlxKey.UP]);
+				inline bindKeys(Control.DOWN, [FlxKey.fromString("S"), FlxKey.DOWN]);
+				inline bindKeys(Control.LEFT, [FlxKey.fromString("A"), FlxKey.LEFT]);
+				inline bindKeys(Control.RIGHT, [FlxKey.fromString("D"), FlxKey.RIGHT]);
 				inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
 				inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
 				inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-				inline bindKeys(Control.RESET, [R]);
+				inline bindKeys(Control.RESET, [FlxKey.fromString("R")]);
 			case Duo(true):
-				inline bindKeys(Control.UP, [W]);
-				inline bindKeys(Control.DOWN, [S]);
-				inline bindKeys(Control.LEFT, [A]);
-				inline bindKeys(Control.RIGHT, [D]);
-				inline bindKeys(Control.ACCEPT, [G, Z]);
-				inline bindKeys(Control.BACK, [H, X]);
-				inline bindKeys(Control.PAUSE, [ONE]);
-				inline bindKeys(Control.RESET, [R]);
+				inline bindKeys(Control.UP, [W, K]);
+				inline bindKeys(Control.DOWN, [S, J]);
+				inline bindKeys(Control.LEFT, [A, H]);
+				inline bindKeys(Control.RIGHT, [D, L]);
+				inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+				inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+				inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
+				inline bindKeys(Control.RESET, [FlxKey.fromString("R")]);
 			case Duo(false):
 				inline bindKeys(Control.UP, [FlxKey.UP]);
 				inline bindKeys(Control.DOWN, [FlxKey.DOWN]);
@@ -560,8 +562,51 @@ class Controls extends FlxActionSet
 			case None: // nothing
 			case Custom: // nothing
 		}
-		#end
+		#end*/
+		
 	}
+
+	public function loadKeyBinds()
+	{
+
+		//trace(FlxKey.fromString(FlxG.save.data.upBind));
+
+		removeKeyboard();
+		KeyBinds.keyCheck();
+
+		inline bindKeys(Control.UP, [FlxKey.fromString(FlxG.save.data.upBind), FlxKey.UP]);
+		inline bindKeys(Control.DOWN, [FlxKey.fromString(FlxG.save.data.downBind), FlxKey.DOWN]);
+		inline bindKeys(Control.LEFT, [FlxKey.fromString(FlxG.save.data.leftBind), FlxKey.LEFT]);
+		inline bindKeys(Control.RIGHT, [FlxKey.fromString(FlxG.save.data.rightBind), FlxKey.RIGHT]);
+		inline bindKeys(Control.ACCEPT, [SPACE, ENTER]);
+		inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+		inline bindKeys(Control.PAUSE, [ENTER, ESCAPE]);
+		inline bindKeys(Control.RESET, [FlxKey.fromString(FlxG.save.data.killBind)]);
+		
+
+		/*if (plsDFJK)
+		{
+			bindKeys(Control.UP, [J, FlxKey.UP]);
+			bindKeys(Control.DOWN, [F, FlxKey.DOWN]);
+			bindKeys(Control.LEFT, [D, FlxKey.LEFT]);
+			bindKeys(Control.RIGHT, [K, FlxKey.RIGHT]);
+			bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+			bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+			bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
+			bindKeys(Control.RESET, [R]);
+		}else
+		{
+			bindKeys(Control.UP, [W, FlxKey.UP]);
+			bindKeys(Control.DOWN, [S, FlxKey.DOWN]);
+			bindKeys(Control.LEFT, [A, FlxKey.LEFT]);
+			bindKeys(Control.RIGHT, [D, FlxKey.RIGHT]);
+			bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
+			bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
+			bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
+			bindKeys(Control.RESET, [R]);
+		}*/
+	}
+	
 
 	function removeKeyboard()
 	{
@@ -621,7 +666,14 @@ class Controls extends FlxActionSet
 
 	public function addDefaultGamepad(id):Void
 	{
-		#if !switch
+		addGamepadLiteral(id, []);
+	}
+
+	public function setMenuControls(id):Void
+	{
+
+		removeGamepad(id);
+
 		addGamepadLiteral(id, [
 			Control.ACCEPT => [A],
 			Control.BACK => [B],
@@ -630,23 +682,65 @@ class Controls extends FlxActionSet
 			Control.LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
 			Control.RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
 			Control.PAUSE => [START],
-			Control.RESET => [Y]
+			Control.RESET => [FlxGamepadInputID.BACK]
 		]);
-		#else
-		addGamepadLiteral(id, [
-			//Swap A and B for switch
-			Control.ACCEPT => [B],
-			Control.BACK => [A],
-			Control.UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP, RIGHT_STICK_DIGITAL_UP],
-			Control.DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN, RIGHT_STICK_DIGITAL_DOWN],
-			Control.LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT, RIGHT_STICK_DIGITAL_LEFT],
-			Control.RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT, RIGHT_STICK_DIGITAL_RIGHT],
-			Control.PAUSE => [START],
-			//Swap Y and X for switch
-			Control.RESET => [Y],
-			Control.CHEAT => [X]
-		]);
-		#end
+	}
+
+	/*
+	"LEFT: DPAD LEFT / X (SQUARE) / LEFT TRIGGER     DOWN: DPAD DOWN / X (CROSS) / LEFT BUMPER     UP: DPAD UP / Y (TRIANGLE) / RIGHT BUMPER     RIGHT: DPAD RIGHT / B (CIRCLE) / RIGHT TRIGGER", 
+	"LEFT: DPAD LEFT / DPAD DOWN     DOWN: DPAD UP / DPAD RIGHT     UP: X (SQUARE) / Y (TRIANGLE)     RIGHT: A (CROSS) / B (CIRCLE)", 
+	"LEFT: ALL DPAD DIRECTIONS     DOWN: LEFT BUMPER / LEFT TRIGGER     UP: RIGHT BUMPER / RIGHT TRIGGER     RIGHT: ALL FACE BUTTONS"
+	*/
+
+	public function setGameControls(id):Void
+	{
+
+		removeGamepad(id);
+
+		switch(Config.controllerScheme){
+
+			case 1:
+				addGamepadLiteral(id, [
+					Control.UP => [X, Y, RIGHT_SHOULDER],
+					Control.DOWN => [DPAD_UP, DPAD_RIGHT, LEFT_SHOULDER],
+					Control.LEFT => [DPAD_LEFT, DPAD_DOWN, LEFT_TRIGGER],
+					Control.RIGHT => [A, B, RIGHT_TRIGGER],
+					Control.PAUSE => [START],
+					Control.RESET => [FlxGamepadInputID.BACK]
+				]);
+
+			case 2:
+				addGamepadLiteral(id, [
+					Control.UP => [RIGHT_SHOULDER, RIGHT_TRIGGER],
+					Control.DOWN => [LEFT_SHOULDER, LEFT_TRIGGER],
+					Control.LEFT => [DPAD_LEFT, DPAD_UP, DPAD_RIGHT, DPAD_DOWN],
+					Control.RIGHT => [A, B, X, Y],
+					Control.PAUSE => [START],
+					Control.RESET => [FlxGamepadInputID.BACK]
+				]);
+				
+			case 3:
+				addGamepadLiteral(id, [
+					Control.UP => [FlxGamepadInputID.fromString(FlxG.save.data.upBindController)],
+					Control.DOWN => [FlxGamepadInputID.fromString(FlxG.save.data.downBindController)],
+					Control.LEFT => [FlxGamepadInputID.fromString(FlxG.save.data.leftBindController)],
+					Control.RIGHT => [FlxGamepadInputID.fromString(FlxG.save.data.rightBindController)],
+					Control.PAUSE => [START],
+					Control.RESET => [FlxGamepadInputID.BACK]
+				]);
+
+			default:
+				addGamepadLiteral(id, [
+					Control.UP => [DPAD_UP, Y, RIGHT_SHOULDER],
+					Control.DOWN => [DPAD_DOWN, A, LEFT_SHOULDER],
+					Control.LEFT => [DPAD_LEFT, X, LEFT_TRIGGER],
+					Control.RIGHT => [DPAD_RIGHT, B, RIGHT_TRIGGER],
+					Control.PAUSE => [START],
+					Control.RESET => [FlxGamepadInputID.BACK]
+				]);
+		}
+
+		
 	}
 
 	/**

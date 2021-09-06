@@ -5,6 +5,7 @@ import Discord.DiscordClient;
 #end
 import flixel.FlxG;
 import flixel.FlxObject;
+import Controls.KeyboardScheme;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
@@ -34,6 +35,9 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 
+	var keyShit = new KeyBindMenu();
+	
+
 	override function create()
 	{
 		#if desktop
@@ -43,11 +47,11 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.mouse.visible = false;
 
-		openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+		
 
-		if (openfl.Lib.current.stage.frameRate < 30)
+		if (FlxG.save.data.FPS == null)
 		{
-			openfl.Lib.current.stage.frameRate = 60;
+			FlxG.save.data.FPS = 120;
 		}
 
 		transIn = FlxTransitionableState.defaultTransIn;
@@ -112,6 +116,38 @@ class MainMenuState extends MusicBeatState
 
 		// NG.core.calls.event.logEvent('swag').send();
 
+		if (FlxG.save.data.dfjk == null)
+			FlxG.save.data.dfjk = true;
+
+		if (FlxG.save.data.upBind == null)
+			FlxG.save.data.upBind = "W";
+
+		if (FlxG.save.data.downBind == null)
+			FlxG.save.data.downBind = "S";
+
+		if (FlxG.save.data.leftBind == null)
+			FlxG.save.data.leftBind = "A";
+
+		if (FlxG.save.data.rightBind == null)
+			FlxG.save.data.rightBind = "D";
+
+		if (FlxG.save.data.killBind == null)
+			FlxG.save.data.killBind = "R";
+
+		
+
+		FlxG.save.flush();
+
+		//keyShit.saveKeys();
+		PlayerSettings.player1.controls.loadKeyBinds();
+
+		/*if (FlxG.save.data.dfjk)
+			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
+		else
+			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
+		*/
+		trace(FlxG.save.data.dfjk);
+		
 		changeItem();
 
 		super.create();
@@ -121,6 +157,12 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		//keyShit.saveKeys();
+
+		//openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
+			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+
 		if (FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
@@ -132,12 +174,14 @@ class MainMenuState extends MusicBeatState
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(-1);
+				trace("up");
 			}
 
 			if (controls.DOWN_P)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
+				trace("down");
 			}
 
 			if (controls.BACK)
@@ -192,9 +236,10 @@ class MainMenuState extends MusicBeatState
 										trace("Freeplay Menu Selected");
 
 									case 'options':
-										FlxTransitionableState.skipNextTransIn = true;
-										FlxTransitionableState.skipNextTransOut = true;
-										FlxG.switchState(new OptionsMenu());
+										//FlxTransitionableState.skipNextTransIn = true;
+										//FlxTransitionableState.skipNextTransOut = true;
+										//FlxG.switchState(new OptionsMenu());
+										FlxG.switchState(new OptionsSubState());
 								}
 							});
 						}

@@ -1,5 +1,7 @@
 package;
 
+import flixel.addons.transition.FlxTransitionableState;
+import haxe.display.Display.Platform;
 import flixel.util.FlxSave;
 import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxUINumericStepper;
@@ -10,9 +12,9 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
-class OptionsSubState extends MusicBeatSubstate
+class OptionsSubState extends MusicBeatState
 {
-	var textMenuItems:Array<String> = ["Old Input"];
+	var textMenuItems:Array<String> = ["Old Input", "Key Binds"];
 
 	var selector:FlxSprite;
 	var curSelected:Int = 0;
@@ -25,13 +27,25 @@ class OptionsSubState extends MusicBeatSubstate
 
 	var theFps:Float;
 
-	
+	var actualSelector:FlxText;
 
-	public function new()
+	override function create()
 	{
-		super();
+		super.create();
 
 		FlxG.mouse.visible = true;
+
+		transIn = FlxTransitionableState.defaultTransIn;
+		transOut = FlxTransitionableState.defaultTransOut;
+
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
+		bg.scrollFactor.x = 0;
+		bg.scrollFactor.y = 0.15;
+		bg.setGraphicSize(Std.int(bg.width * 1.1));
+		bg.updateHitbox();
+		bg.screenCenter();
+		bg.antialiasing = true;
+		add(bg);
 
 		grpOptionsTexts = new FlxTypedGroup<FlxText>();
 		add(grpOptionsTexts);
@@ -39,10 +53,19 @@ class OptionsSubState extends MusicBeatSubstate
 		selector = new FlxSprite(20, 25).makeGraphic(30, 30, FlxColor.RED);
 		add(selector);
 
-		fpsThing = new FlxUINumericStepper(300, 120, 10, FlxG.save.data.FPS, 30, 200);
+		actualSelector = new FlxText(280, 300, 0, "<", 40);
+		actualSelector.visible = true;
+		actualSelector.setFormat("assets/fonts/funkin.otf", 50);
+		actualSelector.borderStyle = FlxTextBorderStyle.OUTLINE;
+		actualSelector.borderColor = FlxColor.BLACK;
+		actualSelector.borderSize = 1.5;
+		actualSelector.antialiasing = true;
+		add(actualSelector);
+
+		fpsThing = new FlxUINumericStepper(130, 150, 10, FlxG.save.data.FPS, 30, 200);
 		add(fpsThing);
 
-		button = new FlxButton(290, 140, "change FPS", changeFps);
+		button = new FlxButton(120, 170, "change FPS", changeFps);
 		add(button);
 
 		for (i in 0...textMenuItems.length)
@@ -71,22 +94,47 @@ class OptionsSubState extends MusicBeatSubstate
 		return "Old Input" ;
 	}
 	*/
-	
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		var notAllowed:Array<String> = [];
+
+		if (curSelected != 1)
+		{
+			actualSelector.y = 25;
+		}else
+		{
+			actualSelector.y = 75;
+		}
+
+		if(curSelected != 2){
+
+            for(x in textMenuItems){
+                if(x != textMenuItems[curSelected]){notAllowed.push(x);}
+            }
+            
+        }
+        else {for(x in textMenuItems){notAllowed.push(x);}}
+
 
 		if (controls.BACK)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			FlxG.switchState(new MainMenuState());
 		}
-		if (controls.UP_P)
+		if (FlxG.keys.justPressed.UP)
+		{
 			curSelected -= 1;
+			FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+		}
 
-		if (controls.DOWN_P)
+		if (FlxG.keys.justPressed.DOWN)
+		{
 			curSelected += 1;
+			FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+		}
 
 		if (curSelected < 0)
 			curSelected = textMenuItems.length - 1;
@@ -97,20 +145,37 @@ class OptionsSubState extends MusicBeatSubstate
 		grpOptionsTexts.forEach(function(txt:FlxText)
 		{
 			txt.color = FlxColor.WHITE;
+			txt.antialiasing = true;
+			txt.borderSize = (1.5);
 
-			//if (txt.ID == curSelected)
-			//	txt.color = FlxColor.YELLOW;
+			if (txt.ID == curSelected)
+			{
+				txt.color = FlxColor.RED;
+				txt.scale.set(1.05, 1.05);
+				selector.scale.set(1, 1);
+			}else
+			{
+				txt.scale.set(1, 1);
+				selector.scale.set(1.05, 1.05);
+			}
+		});
 
+		grpOptionsTexts.forEach(function(txt:FlxText)
+		{
+			txt.setFormat("assets/fonts/Funkin-Bold.otf", 50);
+			txt.borderStyle = FlxTextBorderStyle.OUTLINE;
+			txt.borderColor = FlxColor.BLACK;
 			if (PlayState.oldInput)
 			{
-				txt.color = FlxColor.YELLOW;
+				//txt.color = FlxColor.YELLOW;
 				selector.color = FlxColor.RED;
 			}else
 			{
-				txt.color = FlxColor.WHITE;
+				//txt.color = FlxColor.WHITE;
 				selector.color = FlxColor.GRAY;
 			}
 		});
+
 
 		if (controls.ACCEPT)
 		{
@@ -121,6 +186,7 @@ class OptionsSubState extends MusicBeatSubstate
 				//	FlxG.state.openSubState(new ControlsSubState());
 
 				case "Old Input":
+				{
 					if (PlayState.oldInput)
 					{
 						PlayState.oldInput = false;
@@ -128,22 +194,29 @@ class OptionsSubState extends MusicBeatSubstate
 					{
 						PlayState.oldInput = true;
 					}
-
-				
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-				FlxFlicker.flicker(selector, 1, 0.06, true, false, function(flick:FlxFlicker)
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxFlicker.flicker(selector, 1, 0.06, true, false, function(flick:FlxFlicker){});
+				}
+				case "Key Binds":
 				{
-					//FlxG.switchState(new MainMenuState());
-				});
-				
-				
+					FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+					FlxG.switchState(new KeyBindMenu());
+				}
 
-				
-
-					
-
-					
 			}
+
+				
+			//FlxG.sound.play(Paths.sound('confirmMenu'));
+			//FlxFlicker.flicker(selector, 1, 0.06, true, false, function(flick:FlxFlicker){});
+				
+				
+
+				
+
+					
+
+					
+			
 		}
 	}
 }

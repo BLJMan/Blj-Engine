@@ -124,6 +124,7 @@ class PlayState extends MusicBeatState
 	var defaultCamZoom:Float = 1.05;
 
 	public static var oldInput:Bool = false;
+	public static var dfjk:Bool = false;           
 
 	// how big to stretch the pixel art assets
 	public static var daPixelZoom:Float = 6;
@@ -831,7 +832,7 @@ class PlayState extends MusicBeatState
 		missText.scrollFactor.set();
 		add(missText);
 
-		var pogTxt = new FlxText(20, healthBarBG.y + 45, 0, curSong + " " + CoolUtil.difficultyString() + " - BE 0.1 - FNF 0.2.7.1", 25);
+		var pogTxt = new FlxText(20, healthBarBG.y + 45, 0, curSong + " " + CoolUtil.difficultyString() + " - BE 0.2 - FNF 0.2.7.1", 25);
 		pogTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
 		pogTxt.scrollFactor.set();
 		pogTxt.antialiasing = true;
@@ -1440,6 +1441,9 @@ class PlayState extends MusicBeatState
 		perfectMode = false;
 		#end
 
+		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
+			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+
 		if (FlxG.keys.justPressed.SPACE)
 			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 		
@@ -1908,7 +1912,7 @@ class PlayState extends MusicBeatState
 
 		var daRating:String = "sick";
 
-		if (noteDiff > Conductor.safeZoneOffset * 0.9)
+		if (noteDiff > Conductor.safeZoneOffset * 1)
 		{
 			daRating = 'shit';
 			misses ++;
