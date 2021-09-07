@@ -834,7 +834,7 @@ class PlayState extends MusicBeatState
 		missText.scrollFactor.set();
 		add(missText);
 
-		var pogTxt = new FlxText(20, healthBarBG.y + 45, 0, curSong + " " + CoolUtil.difficultyString() + " - BE 0.2 - FNF 0.2.7.1", 25);
+		var pogTxt = new FlxText(20, healthBarBG.y + 45, 0, curSong + " " + CoolUtil.difficultyString() + " - BE 1.0 - FNF 0.2.7.1", 25);
 		pogTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
 		pogTxt.scrollFactor.set();
 		pogTxt.antialiasing = true;
