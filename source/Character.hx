@@ -15,6 +15,8 @@ class Character extends FlxSprite
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
 
+	public var canAutoAnim:Bool = true;
+	
 	public var holdTimer:Float = 0;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
