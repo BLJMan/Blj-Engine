@@ -54,6 +54,11 @@ class MainMenuState extends MusicBeatState
 			FlxG.save.data.FPS = 120;
 		}
 
+		if (FlxG.save.data.downscroll == null)
+		{
+			FlxG.save.data.downscroll = false;
+		}
+
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 
@@ -105,6 +110,9 @@ class MainMenuState extends MusicBeatState
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set();
 			menuItem.antialiasing = true;
+			menuItem.alpha = 0;
+			menuItem.y = (menuItem.y - 100);
+			FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 1, {ease: FlxEase.elasticOut, startDelay: 0.2 + (0.15 * i)});
 		}
 
 		FlxG.camera.follow(camFollow, null, 0.06);

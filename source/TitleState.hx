@@ -173,7 +173,8 @@ class TitleState extends MusicBeatState
 		titleText.updateHitbox();
 		// titleText.screenCenter(X);
 		add(titleText);
-
+		titleText.y = titleText.y + 300;
+	
 		var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image('logo'));
 		logo.screenCenter();
 		logo.antialiasing = true;
@@ -283,6 +284,10 @@ class TitleState extends MusicBeatState
 
 			FlxG.camera.flash(FlxColor.WHITE, 1);
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+
+			FlxTween.tween(titleText, {y: titleText.y - 1000, alpha: 1}, 1, {ease: FlxEase.circIn, startDelay: 0.5});
+			FlxTween.tween(gfDance, {x: gfDance.x + 900, alpha: 1}, 1, {ease: FlxEase.circIn, startDelay: 0.5});
+			FlxTween.tween(logoBl, {x: logoBl.x - 700, alpha: 1}, 1, {ease: FlxEase.circIn, startDelay: 0.5});
 
 			transitioning = true;
 			// FlxG.sound.music.stop();
@@ -426,6 +431,7 @@ class TitleState extends MusicBeatState
 			FlxG.camera.flash(FlxColor.WHITE, 2);
 			remove(credGroup);
 			skippedIntro = true;
+			FlxTween.tween(titleText, {y: titleText.y - 300, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5});
 		}
 	}
 }
