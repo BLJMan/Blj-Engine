@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
@@ -163,6 +164,9 @@ class Note extends FlxSprite
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
+
+				if (FlxG.save.data.downscroll && sustainNote) 
+					flipY = true;
 			}
 		}
 	}
