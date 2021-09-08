@@ -14,9 +14,10 @@ import flixel.util.FlxColor;
 
 class OptionsSubState extends MusicBeatState
 {
-	var textMenuItems:Array<String> = ["OLD INPUT", "KEY BINDS"];
+	var textMenuItems:Array<String> = ["OLD INPUT", "DOWNSCROLL", "KEY BINDS"];
 
 	var selector:FlxSprite;
+	var selector2:FlxSprite;
 	var curSelected:Int = 0;
 
 	var grpOptionsTexts:FlxTypedGroup<FlxText>;
@@ -50,11 +51,14 @@ class OptionsSubState extends MusicBeatState
 		grpOptionsTexts = new FlxTypedGroup<FlxText>();
 		add(grpOptionsTexts);
 
-		selector = new FlxSprite(20, 25).makeGraphic(35, 35, FlxColor.RED);
+		selector = new FlxSprite(40, 25).makeGraphic(35, 35, FlxColor.RED);
 		add(selector);
 
+		selector2 = new FlxSprite(40, 75).makeGraphic(35, 35, FlxColor.RED);
+		add(selector2);
+
 		actualSelector = new FlxText(320, 300, 0, "<", 40);
-		actualSelector.visible = true;
+		actualSelector.visible = false;
 		actualSelector.setFormat("assets/fonts/funkin.otf", 50);
 		actualSelector.borderStyle = FlxTextBorderStyle.OUTLINE;
 		actualSelector.borderColor = FlxColor.BLACK;
@@ -63,10 +67,10 @@ class OptionsSubState extends MusicBeatState
 		actualSelector.antialiasing = true;
 		add(actualSelector);
 
-		fpsThing = new FlxUINumericStepper(130, 150, 10, FlxG.save.data.FPS, 30, 400);
+		fpsThing = new FlxUINumericStepper(130, 250, 10, FlxG.save.data.FPS, 30, 400);
 		add(fpsThing);
 
-		button = new FlxButton(120, 170, "change FPS", changeFps);
+		button = new FlxButton(120, 270, "change FPS", changeFps);
 		add(button);
 
 		for (i in 0...textMenuItems.length)
@@ -105,9 +109,12 @@ class OptionsSubState extends MusicBeatState
 		if (curSelected != 1)
 		{
 			actualSelector.y = 25;
-		}else
+		}else if (curSelected !=2)
 		{
 			actualSelector.y = 75;
+		}else
+		{
+			actualSelector.y = 125;
 		}
 
 		if(curSelected != 2){
@@ -151,13 +158,11 @@ class OptionsSubState extends MusicBeatState
 				//txt.scale.set(1.02, 1.02);
 				//selector.scale.set(1, 1);
 				txt.x = 85;
-				selector.x = 35;
 			}else
 			{
 				//txt.scale.set(1, 1);
 				selector.scale.set(1.05, 1.05);
 				txt.x = 80;
-				selector.x = 40;
 			}
 		});
 
@@ -179,6 +184,16 @@ class OptionsSubState extends MusicBeatState
 			{
 				//txt.color = FlxColor.WHITE;
 				selector.color = FlxColor.RED;
+			}
+
+			if (FlxG.save.data.downscroll)
+			{
+				//txt.color = FlxColor.YELLOW;
+				selector2.color = FlxColor.RED;
+			}else
+			{
+				//txt.color = FlxColor.WHITE;
+				selector2.color = FlxColor.GRAY;
 			}
 		});
 
@@ -202,6 +217,19 @@ class OptionsSubState extends MusicBeatState
 					}
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					FlxFlicker.flicker(selector, 1, 0.06, true, false, function(flick:FlxFlicker){});
+				}
+				case "DOWNSCROLL":
+				{
+					if (FlxG.save.data.downscroll)
+					{
+						FlxG.save.data.downscroll = false;
+					}else
+					{
+						FlxG.save.data.downscroll = true;
+					}
+					trace(FlxG.save.data.downscroll);
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxFlicker.flicker(selector2, 1, 0.06, true, false, function(flick:FlxFlicker){});
 				}
 				case "KEY BINDS":
 				{
