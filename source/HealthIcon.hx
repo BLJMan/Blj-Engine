@@ -36,6 +36,8 @@ class HealthIcon extends FlxSprite
 		animation.add('monster-christmas', [19, 20], 0, false, isPlayer);
 		animation.add('tankman', [8, 9], 0, false, isPlayer);
 		animation.add("gf-tankman", [10, 11], 0, false, isPlayer);
+		animation.add("bf-holding-gf", [0, 1], 0, false, isPlayer);
+		animation.add("picoSpeaker", [10, 11], 0, false, isPlayer);
 		animation.play(char);
 		scrollFactor.set();
 	}
