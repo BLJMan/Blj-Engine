@@ -17,3 +17,5 @@ senpai-angry
 spirit
 tankman
 gf-tankman
+bf-holding-gf
+picoSpeaker
