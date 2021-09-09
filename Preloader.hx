@@ -52,6 +52,6 @@ class Preloader extends FlxBasePreloader
             logo.y = (this._height / 2) - ((logo.height) / 2);
         }
         
-        super.update(Percent);
+        super.update(Percent); 
     }
 }
