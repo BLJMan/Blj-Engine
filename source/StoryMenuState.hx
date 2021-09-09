@@ -74,6 +74,9 @@ class StoryMenuState extends MusicBeatState
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 
+	var isCutscene:Bool = false;
+
+
 	override function create()
 	{
 		transIn = FlxTransitionableState.defaultTransIn;
@@ -334,10 +337,21 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
-			new FlxTimer().start(1, function(tmr:FlxTimer)
+
+			if (curWeek == 7)
 			{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-			});
+				var video:MP4Handler = new MP4Handler();
+				new FlxTimer().start(1, function(tmr:FlxTimer)
+				{
+					video.playMP4(Paths.video('ughCutscene'), new PlayState(), false, false, false);
+				});
+			} else 
+			{
+				new FlxTimer().start(1, function(tmr:FlxTimer)
+				{
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+				});
+			}
 		}
 	}
 

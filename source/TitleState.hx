@@ -50,6 +50,15 @@ class TitleState extends MusicBeatState
 		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
 		#end
 
+		
+		if (FlxG.save.data.FPS == null)
+		{
+			FlxG.save.data.FPS = 120;
+		}
+
+		if (FlxG.save.data.scrollSpeed == null)
+			FlxG.save.data.scrollSpeed = 1;
+
 
 		PlayerSettings.init();
 		
@@ -236,6 +245,9 @@ class TitleState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
+			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
