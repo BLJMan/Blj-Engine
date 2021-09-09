@@ -67,7 +67,7 @@ class OptionsSubState extends MusicBeatState
 		actualSelector.antialiasing = true;
 		add(actualSelector);
 
-		fpsThing = new FlxUINumericStepper(130, 250, 10, FlxG.save.data.FPS, 30, 400);
+		fpsThing = new FlxUINumericStepper(130, 250, 10, FlxG.save.data.FPS, 30, 999);
 		add(fpsThing);
 
 		button = new FlxButton(120, 270, "change FPS", changeFps);
@@ -127,7 +127,7 @@ class OptionsSubState extends MusicBeatState
         else {for(x in textMenuItems){notAllowed.push(x);}}
 
 
-		if (controls.BACK)
+		if (FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			FlxG.switchState(new MainMenuState());
