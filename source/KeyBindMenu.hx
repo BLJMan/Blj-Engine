@@ -57,7 +57,7 @@ class KeyBindMenu extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = true;
-		bg.color = 0xFF9766BE;
+		bg.color = 0xFFea71fd;
 		add(bg);
 
         keyTextDisplay = new FlxText(0, 0, 1280, "", 72);
@@ -90,6 +90,9 @@ class KeyBindMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+        if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
+			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+        
 
         switch(state){
 
@@ -200,7 +203,7 @@ class KeyBindMenu extends MusicBeatState
 
         saveKeys();
 
-        FlxG.switchState(new OptionsSubState());
+        FlxG.switchState(new OtherOptionsSubState());
 
     }
 
@@ -210,7 +213,7 @@ class KeyBindMenu extends MusicBeatState
 
         saveKeys();
 
-        FlxG.switchState(new OptionsSubState());
+        FlxG.switchState(new OtherOptionsSubState());
 
     }
 

@@ -28,7 +28,7 @@ class MP4Handler
 	public function new()
 	{
 
-		FlxG.autoPause = false;
+		FlxG.autoPause = true;
 
 		if (FlxG.sound.music != null)
 		{
@@ -39,7 +39,7 @@ class MP4Handler
 	public function playMP4(path:String, callback:FlxState, ?outputTo:FlxSprite = null, ?repeat:Bool = false, ?isWindow:Bool = false, ?isFullscreen:Bool = false):Void
 	{
 		#if html5
-		FlxG.autoPause = false;
+		FlxG.autoPause = true;
 
 		if (FlxG.sound.music != null)
 		{

@@ -1,5 +1,6 @@
 package;
 
+//import NEWOptionsSubState.NEWOptionsSupState;
 #if desktop
 import Discord.DiscordClient;
 import sys.thread.Thread;
@@ -245,6 +246,17 @@ class TitleState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		#if debug
+		if (FlxG.keys.justPressed.P)
+			FlxG.switchState(new AboutSubState());
+		if (FlxG.keys.justPressed.S)
+			FlxG.switchState(new StoryMenuState());
+		if (FlxG.keys.justPressed.F)
+			FlxG.switchState(new FreeplayState());
+		if (FlxG.keys.justPressed.O)
+			FlxG.switchState(new NEWOptionsSubState());
+		#end
+
 		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
 			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 
@@ -428,6 +440,9 @@ class TitleState extends MusicBeatState
 				addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
 
 			case 16:
+				addMoreText(" ");
+				addMoreText("BLJ ENGINE");
+			case 17:
 				skipIntro();
 		}
 	}
