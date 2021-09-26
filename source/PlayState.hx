@@ -88,6 +88,7 @@ class PlayState extends MusicBeatState
 
 	private var generatedMusic:Bool = false;
 	private var startingSong:Bool = false;
+	public static var changedDifficulty:Bool = false;
 
 	private var iconP1:HealthIcon;
 	private var iconP2:HealthIcon;
@@ -824,7 +825,7 @@ class PlayState extends MusicBeatState
 			case 'schoolEvil':
 				// trailArea.scrollFactor.set();
 
-				var evilTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069);
+				var evilTrail = new FlxTrail(dad, null, 6, 24, 0.4, 0.055);
 				// evilTrail.changeValuesEnabled(false, false, false, false);
 				// evilTrail.changeGraphic()
 				add(evilTrail);
@@ -919,6 +920,26 @@ class PlayState extends MusicBeatState
 		// healthBar
 		add(healthBar);
 
+		switch (SONG.player2)
+        {
+         case 'gf':
+         healthBar.createFilledBar(0xFFFF0000, 0xFF0097C4);
+         case 'dad' | 'mom-car' | 'parents-christmas':
+          healthBar.createFilledBar(0xFF5A07F5, 0xFF0097C4);
+         case 'spooky':
+          healthBar.createFilledBar(0xFFF57E07, 0xFF0097C4);
+         case 'monster-christmas' | 'monster':
+          healthBar.createFilledBar(0xFFF5DD07, 0xFF0097C4);
+         case 'pico':
+          healthBar.createFilledBar(0xFF52B514, 0xFF0097C4);
+         case 'senpai' | 'senpai-angry':
+          healthBar.createFilledBar(0xFFF76D6D, 0xFF0097C4);
+         case 'spirit':
+          healthBar.createFilledBar(0xFFAD0505, 0xFF0097C4);
+	     case 'tankman':
+          healthBar.createFilledBar(FlxColor.GRAY, 0xFF0097C4);
+        }
+
 		scoreTxt = new FlxText(healthBarBG.x + healthBarBG.width - 180, healthBarBG.y + 45, 0, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
 		scoreTxt.antialiasing = true;
@@ -928,6 +949,7 @@ class PlayState extends MusicBeatState
 		missText = new FlxText(healthBarBG.x + healthBarBG.width - 180, healthBarBG.y + 30, 0, "", 20);
 		missText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
 		missText.antialiasing = true;
+		missText.visible = FlxG.save.data.showMiss;
 		missText.scrollFactor.set();
 		add(missText);
 
@@ -1270,7 +1292,9 @@ class PlayState extends MusicBeatState
 
 			for (songNotes in section.sectionNotes)
 			{
-				var daStrumTime:Float = songNotes[0];
+				var daStrumTime:Float = songNotes[0] - FlxG.save.data.offset;
+				if (daStrumTime < 0)
+					daStrumTime = 0;
 				var daNoteData:Int = Std.int(songNotes[1] % 4);
 
 				var gottaHitNote:Bool = section.mustHitSection;
@@ -1540,6 +1564,11 @@ class PlayState extends MusicBeatState
 		perfectMode = false;
 		#end
 
+		/*if (FlxG.keys.justPressed.O)
+		{
+			FlxG.save.data.botplay = true;
+		}*/
+
 		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
 			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 
@@ -1783,25 +1812,32 @@ class PlayState extends MusicBeatState
 			trace("User is cheating!");
 		}
 
-		if (health <= 0)
+		if (FlxG.save.data.practice)
 		{
-			boyfriend.stunned = true;
+			if (health <= 0)
+				health = 0;
+		}else
+		{
+			if (health <= 0)
+			{
+				boyfriend.stunned = true;
 
-			persistentUpdate = false;
-			persistentDraw = false;
-			paused = true;
+				persistentUpdate = false;
+				persistentDraw = false;
+				paused = true;
 
-			vocals.stop();
-			FlxG.sound.music.stop();
+				vocals.stop();
+				FlxG.sound.music.stop();
 
-			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
-			// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 			
-			#if desktop
-			// Game Over doesn't get his own variable because it's only used here
-			DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC);
-			#end
+				#if desktop
+				// Game Over doesn't get his own variable because it's only used here
+				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconRPC);
+				#end
+			}
 		}
 
 		if (unspawnNotes[0] != null)
@@ -1843,6 +1879,8 @@ class PlayState extends MusicBeatState
 							if (SONG.notes[Math.floor(curStep / 16)].altAnim)
 								altAnim = '-alt';
 						}
+
+						
 	
 						switch (Math.abs(daNote.noteData))
 						{
@@ -1886,8 +1924,11 @@ class PlayState extends MusicBeatState
 						{
 							health -= 0.075;
 							vocals.volume = 0;
+							misses ++;
 							if (theFunne)
+							{
 								noteMiss();
+							}
 						}
 	
 						daNote.active = false;
@@ -1998,6 +2039,7 @@ class PlayState extends MusicBeatState
 		else
 		{
 			trace('WENT BACK TO FREEPLAY??');
+			//FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			FlxG.switchState(new FreeplayState());
 		}
 	}
@@ -2266,7 +2308,10 @@ class PlayState extends MusicBeatState
 						for (shit in 0...pressArray.length)
 							{ // if a direction is hit that shouldn't be
 								if (pressArray[shit] && !directionList.contains(shit))
+								{
+									misses ++;
 									noteMiss(shit);
+								}
 							}
 					}
 					for (coolNote in possibleNotes)
@@ -2281,7 +2326,10 @@ class PlayState extends MusicBeatState
 					{
 						for (shit in 0...pressArray.length)
 							if (pressArray[shit])
+							{
+								misses ++;
 								noteMiss(shit);
+							}
 					}
 
 
@@ -2340,7 +2388,6 @@ class PlayState extends MusicBeatState
 				gf.playAnim('sad');
 			}
 			combo = 0;
-			misses++;
 
 			songScore -= 10;
 
@@ -2356,16 +2403,22 @@ class PlayState extends MusicBeatState
 				boyfriend.stunned = false;
 			});
 
-			switch (direction)
+			if (FlxG.save.data.ghost)
 			{
-				case 0:
-					boyfriend.playAnim('singLEFTmiss', true);
-				case 1:
-					boyfriend.playAnim('singDOWNmiss', true);
-				case 2:
-					boyfriend.playAnim('singUPmiss', true);
-				case 3:
-					boyfriend.playAnim('singRIGHTmiss', true);
+				
+			}else 
+			{
+				switch (direction)
+				{
+					case 0:
+						boyfriend.playAnim('singLEFTmiss', true);
+					case 1:
+						boyfriend.playAnim('singDOWNmiss', true);
+					case 2:
+						boyfriend.playAnim('singUPmiss', true);
+					case 3:
+						boyfriend.playAnim('singRIGHTmiss', true);
+				}
 			}
 		}
 	}
@@ -2383,18 +2436,22 @@ class PlayState extends MusicBeatState
 		{
 			if (leftP)
 			{
+				misses ++;
 				noteMiss(0);
 			}
 			if (downP)
 			{
+				misses ++;
 				noteMiss(1);
 			}
 			if (upP)
 			{
+				misses ++;
 				noteMiss(2);
 			}
 			if (rightP)
 			{
+				misses ++;
 				noteMiss(3);
 			}
 		}
@@ -2409,6 +2466,7 @@ class PlayState extends MusicBeatState
 		else if (!theFunne)
 		{
 			badNoteCheck();
+			//goodNoteHit(note);
 		}
 	}
 
