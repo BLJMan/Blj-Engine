@@ -17,14 +17,26 @@ class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = [];
+	var menuItemsOG:Array<String> = ['Resume', "Change Difficulty", "Practice mode", "Botplay", 'Restart Song', 'Exit to menu'];
 	var curSelected:Int = 0;
 
+	var difficultyChoices = [];
+
 	var pauseMusic:FlxSound;
+	var practiceText:FlxText;
+	var botText:FlxText;
 
 	public function new(x:Float, y:Float)
 	{
 		super();
+		menuItems = menuItemsOG;
+
+		for (i in 0...CoolUtil.difficultyStuff.length) {
+			var diff:String = '' + CoolUtil.difficultyStuff[i][0];
+			difficultyChoices.push(diff);
+		}
+		difficultyChoices.push('BACK');
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -51,11 +63,27 @@ class PauseSubState extends MusicBeatSubstate
 		levelDifficulty.updateHitbox();
 		add(levelDifficulty);
 
+		practiceText = new FlxText(20, 15 + 69, 0, "PRACTICE MODE", 32);
+		practiceText.scrollFactor.set();
+		practiceText.setFormat(Paths.font("vcr.ttf"), 32);
+		practiceText.updateHitbox();
+		add(practiceText);
+
+		botText = new FlxText(20, 15 + 100, 0, "BOTPLAY", 32);
+		botText.scrollFactor.set();
+		botText.setFormat(Paths.font("vcr.ttf"), 32);
+		botText.updateHitbox();
+		add(botText);
+
 		levelDifficulty.alpha = 0;
 		levelInfo.alpha = 0;
+		practiceText.alpha = 0;
+		botText.alpha = 0;
 
 		levelInfo.x = FlxG.width - (levelInfo.width + 20);
 		levelDifficulty.x = FlxG.width - (levelDifficulty.width + 20);
+		practiceText.x = FlxG.width - (practiceText.width + 20);
+		botText.x = FlxG.width - (botText.width + 20);
 
 		FlxTween.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
 		FlxTween.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
@@ -79,6 +107,24 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function update(elapsed:Float)
 	{
+		if (FlxG.save.data.practice)
+		{
+			practiceText.alpha = 1;
+		}
+		else
+		{
+			practiceText.alpha = 0;
+		}
+
+		if (FlxG.save.data.botplay)
+		{
+			botText.alpha = 1;
+		}
+		else
+		{
+			botText.alpha = 0;
+		}
+
 		if (pauseMusic.volume < 0.5)
 			pauseMusic.volume += 0.01 * elapsed;
 
@@ -100,15 +146,52 @@ class PauseSubState extends MusicBeatSubstate
 		if (accepted)
 		{
 			var daSelected:String = menuItems[curSelected];
+			for (i in 0...difficultyChoices.length-1) {
+				if(difficultyChoices[i] == daSelected) {
+					var name:String = PlayState.SONG.song.toLowerCase();
+					var poop = Highscore.formatSong(name, curSelected);
+					PlayState.SONG = Song.loadFromJson(poop, name);
+					PlayState.storyDifficulty = curSelected;
+					FlxG.resetState();
+					FlxG.sound.music.volume = 0;
+					//PlayState.changedDifficulty = true;
+					//PlayState.cpuControlled = false;
+					return;
+				}
+			} 
 
 			switch (daSelected)
 			{
 				case "Resume":
 					close();
+				case 'Change Difficulty':
+					menuItems = difficultyChoices;
+					regenMenu();
+				case "Practice mode":
+					if (FlxG.save.data.practice)
+					{
+						FlxG.save.data.practice = false;
+					}else
+					{
+						FlxG.save.data.practice = true;
+					}
+					trace("practice : " + FlxG.save.data.practice);
+				case "Botplay": 
+					if (FlxG.save.data.botplay)
+					{
+						FlxG.save.data.botplay = false;
+					}else
+					{
+						FlxG.save.data.botplay = true;
+					}
+					trace("botplay : " + FlxG.save.data.botplay);
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
 					FlxG.switchState(new MainMenuState());
+				case 'BACK':
+					menuItems = menuItemsOG;
+					regenMenu();
 			}
 		}
 
@@ -151,5 +234,19 @@ class PauseSubState extends MusicBeatSubstate
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
+	}
+
+	function regenMenu():Void {
+	for (i in 0...grpMenuShit.members.length) {
+		this.grpMenuShit.remove(this.grpMenuShit.members[0], true);
+	}
+	for (i in 0...menuItems.length) {
+		var item = new Alphabet(0, 70 * i + 30, menuItems[i], true, false);
+		item.isMenuItem = true;
+		item.targetY = i;
+		grpMenuShit.add(item);
+	}
+	curSelected = 0;
+	changeSelection();
 	}
 }
