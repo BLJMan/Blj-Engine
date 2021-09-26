@@ -14,10 +14,11 @@ import flixel.util.FlxColor;
 
 class OptionsSubState extends MusicBeatState
 {
-	var textMenuItems:Array<String> = ["OLD INPUT", "DOWNSCROLL", "KEY BINDS"];
+	var textMenuItems:Array<String> = ["OLD INPUT", "DOWNSCROLL", "BOTPLAY"];
 
 	var selector:FlxSprite;
 	var selector2:FlxSprite;
+	var selector3:FlxSprite;
 	var curSelected:Int = 0;
 
 	var grpOptionsTexts:FlxTypedGroup<FlxText>;
@@ -29,6 +30,8 @@ class OptionsSubState extends MusicBeatState
 	var theFps:Float;
 
 	var actualSelector:FlxText;
+
+	var fpsText:FlxText;
 
 	override function create()
 	{
@@ -57,6 +60,9 @@ class OptionsSubState extends MusicBeatState
 		selector2 = new FlxSprite(40, 75).makeGraphic(35, 35, FlxColor.RED);
 		add(selector2);
 
+		selector3 = new FlxSprite(40, 125).makeGraphic(35, 35, FlxColor.RED);
+		add(selector3);
+
 		actualSelector = new FlxText(320, 300, 0, "<", 40);
 		actualSelector.visible = false;
 		actualSelector.setFormat("assets/fonts/funkin.otf", 50);
@@ -69,6 +75,12 @@ class OptionsSubState extends MusicBeatState
 
 		fpsThing = new FlxUINumericStepper(130, 250, 10, FlxG.save.data.FPS, 30, 999);
 		add(fpsThing);
+
+		fpsText = new FlxText(120, 270, 0, "FPS CAP :" + FlxG.save.data.FPS, 40);
+		fpsText.setFormat("assets/fonts/funkin.otf", 50);
+		fpsText.borderStyle = FlxTextBorderStyle.OUTLINE;
+		fpsText.borderColor = FlxColor.BLACK;
+		//add(fpsText);
 
 		button = new FlxButton(120, 270, "change FPS", changeFps);
 		add(button);
@@ -104,6 +116,8 @@ class OptionsSubState extends MusicBeatState
 	{
 		super.update(elapsed);
 
+		fpsText.text = "<  FPS CAP: " + theFps + "  >";
+
 		var notAllowed:Array<String> = [];
 
 		if (curSelected != 1)
@@ -127,10 +141,10 @@ class OptionsSubState extends MusicBeatState
         else {for(x in textMenuItems){notAllowed.push(x);}}
 
 
-		if (FlxG.keys.justPressed.ESCAPE)
+		if (controls.BACK)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			FlxG.switchState(new MainMenuState());
+			FlxG.switchState(new OtherOptionsSubState());
 		}
 		if (FlxG.keys.justPressed.UP)
 		{
@@ -143,6 +157,18 @@ class OptionsSubState extends MusicBeatState
 			curSelected += 1;
 			FlxG.sound.play('assets/sounds/scrollMenu.ogg');
 		}
+
+		/*if (FlxG.keys.justPressed.RIGHT)
+		{
+			theFps = FlxG.save.data.FPS + 10;
+			changeFps();
+		}
+
+		if (FlxG.keys.justPressed.LEFT)
+		{
+			theFps = FlxG.save.data.FPS - 10;
+			changeFps();
+		}*/
 
 		if (curSelected < 0)
 			curSelected = textMenuItems.length - 1;
@@ -157,12 +183,13 @@ class OptionsSubState extends MusicBeatState
 				txt.color = FlxColor.RED;
 				//txt.scale.set(1.02, 1.02);
 				//selector.scale.set(1, 1);
-				txt.x = 85;
+				txt.x = 80;
+				txt.alpha = 1;
 			}else
 			{
 				//txt.scale.set(1, 1);
-				selector.scale.set(1.05, 1.05);
 				txt.x = 80;
+				txt.alpha = 0.5;
 			}
 		});
 
@@ -194,6 +221,16 @@ class OptionsSubState extends MusicBeatState
 			{
 				//txt.color = FlxColor.WHITE;
 				selector2.color = FlxColor.GRAY;
+			}
+
+			if (FlxG.save.data.botplay)
+			{
+				//txt.color = FlxColor.YELLOW;
+				selector3.color = FlxColor.RED;
+			}else
+			{
+				//txt.color = FlxColor.WHITE;
+				selector3.color = FlxColor.GRAY;
 			}
 		});
 
@@ -235,6 +272,19 @@ class OptionsSubState extends MusicBeatState
 				{
 					FlxG.sound.play('assets/sounds/scrollMenu.ogg');
 					FlxG.switchState(new KeyBindMenu());
+				}
+				case "BOTPLAY":
+				{
+					if (FlxG.save.data.botplay)
+					{
+						FlxG.save.data.botplay = false;
+					}else
+					{
+						FlxG.save.data.botplay = true;
+					}
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxFlicker.flicker(selector3, 1, 0.06, true, false, function(flick:FlxFlicker){});
+					trace(FlxG.save.data.botplay);
 				}
 
 			}
