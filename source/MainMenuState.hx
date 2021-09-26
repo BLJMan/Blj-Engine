@@ -74,8 +74,8 @@ class MainMenuState extends MusicBeatState
 
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
 		bg.scrollFactor.x = 0;
-		bg.scrollFactor.y = 0.15;
-		bg.setGraphicSize(Std.int(bg.width * 1.1));
+		bg.scrollFactor.y = 0.2;
+		bg.setGraphicSize(Std.int(bg.width * 1.2));
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = true;
@@ -86,8 +86,8 @@ class MainMenuState extends MusicBeatState
 
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
 		magenta.scrollFactor.x = 0;
-		magenta.scrollFactor.y = 0.15;
-		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
+		magenta.scrollFactor.y = 0.2;
+		magenta.setGraphicSize(Std.int(magenta.width * 1.2));
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
@@ -115,7 +115,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.antialiasing = true;
 			menuItem.alpha = 0;
 			menuItem.y = (menuItem.y - 100);
-			FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 1, {ease: FlxEase.elasticOut, startDelay: 0.2 + (0.15 * i)});
+			FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 1, {ease: FlxEase.elasticOut, startDelay: 0.5 + (0.075 * i)});
 		}
 
 		FlxG.camera.follow(camFollow, null, 0.06);
@@ -171,6 +171,19 @@ class MainMenuState extends MusicBeatState
 		//keyShit.saveKeys();
 
 		//openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+
+		/*if (FlxG.keys.pressed.RIGHT)
+		{
+			FlxG.save.data.offset++;
+			trace(FlxG.save.data.offset);
+		}
+
+		if (FlxG.keys.pressed.LEFT)
+		{
+			FlxG.save.data.offset--;
+			trace(FlxG.save.data.offset);
+		}*/
+
 		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
 			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 
@@ -250,7 +263,7 @@ class MainMenuState extends MusicBeatState
 										//FlxTransitionableState.skipNextTransIn = true;
 										//FlxTransitionableState.skipNextTransOut = true;
 										//FlxG.switchState(new OptionsMenu());
-										FlxG.switchState(new OptionsSubState());
+										FlxG.switchState(new OtherOptionsSubState());
 								}
 							});
 						}
