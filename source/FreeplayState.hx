@@ -1,5 +1,6 @@
 package;
 
+import flixel.tweens.FlxTween;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -27,11 +28,14 @@ class FreeplayState extends MusicBeatState
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
+	private var mainColor = FlxColor.WHITE;
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
+
+	var bg:FlxSprite;
 
 	override function create()
 	{
@@ -39,16 +43,17 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...initSonglist.length)
 		{
-			songs.push(new SongMetadata(initSonglist[i], 1, 'gf'));
+			songs.push(new SongMetadata(initSonglist[i], 1, 'gf', FlxColor.PINK));
+			//songs.push(new SongMetadata("eggnog", 5, 'parents-christmas', FlxColor.fromRGB(141, 165, 206)));
+			
 		}
 
-		/* 
-			if (FlxG.sound.music != null)
-			{
-				if (!FlxG.sound.music.playing)
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			}
-		 */
+		/*if (FlxG.sound.music != null)
+		{
+			if (!FlxG.sound.music.playing)
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		}*/
+		 
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -62,31 +67,31 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		if (StoryMenuState.weekUnlocked[2] || isDebug)
-			addWeek(['Bopeebo', 'Fresh', 'Dadbattle'], 1, ['dad']);
+			addWeek(['Bopeebo', 'Fresh', 'Dadbattle'], 1, ['dad'], [FlxColor.fromRGB(129, 100, 223)]);
 
 		if (StoryMenuState.weekUnlocked[2] || isDebug)
-			addWeek(['Spookeez', 'South', 'Monster'], 2, ['spooky']);
+			addWeek(['Spookeez', 'South', 'Monster'], 2, ['spooky', "spooky", "monster"], [FlxColor.fromRGB(30, 45, 60)]);
 
 		if (StoryMenuState.weekUnlocked[3] || isDebug)
-			addWeek(['Pico', 'Philly', 'Blammed'], 3, ['pico']);
+			addWeek(['Pico', 'Philly', 'Blammed'], 3, ['pico'], [FlxColor.fromRGB(111, 19, 60)]);
 
 		if (StoryMenuState.weekUnlocked[4] || isDebug)
-			addWeek(['Satin-Panties', 'High', 'Milf'], 4, ['mom']);
+			addWeek(['Satin-Panties', 'High', 'Milf'], 4, ['mom'], [FlxColor.fromRGB(203, 113, 170)]);
 
 		if (StoryMenuState.weekUnlocked[5] || isDebug)
-			addWeek(['Cocoa', 'Eggnog', 'Winter-Horrorland'], 5, ['parents-christmas', 'parents-christmas', 'monster-christmas']);
+			addWeek(['Cocoa', 'Eggnog', 'Winter-Horrorland'], 5, ['parents-christmas', 'parents-christmas', 'monster-christmas'], [FlxColor.fromRGB(141, 165, 206)]);
 
 		if (StoryMenuState.weekUnlocked[6] || isDebug)
-			addWeek(['Senpai', 'Roses', 'Thorns'], 6, ['senpai', 'senpai', 'spirit']);
+			addWeek(['Senpai', 'Roses', 'Thorns'], 6, ['senpai', 'senpai', 'spirit'], [FlxColor.fromRGB(206, 106, 169)]);
 
 		if (StoryMenuState.weekUnlocked[7] || isDebug)
-			addWeek(['Ugh', 'Guns', 'Stress'], 7, ['tankman', 'tankman', 'tankman']);
+			addWeek(['Ugh', 'Guns', 'Stress'], 7, ['tankman', 'tankman', 'tankman'], [FlxColor.fromRGB(30, 45, 60)]);
 
 		// LOAD MUSIC
 
 		// LOAD CHARACTERS
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing  = true;
 		add(bg);
 
@@ -160,34 +165,73 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String)
+	public function addSong(songName:String, weekNum:Int, songCharacter:String, songColor:FlxColor)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter));
+
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, songColor));
 	}
 
-	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>)
+	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>, ?songColor:Array<FlxColor>)
 	{
 		if (songCharacters == null)
 			songCharacters = ['bf'];
+		if (songColor == null)
+			songColor = [FlxColor.WHITE];
 
-		var num:Int = 0;
+		var num:Array<Int> = [0, 0];
 		for (song in songs)
 		{
-			addSong(song, weekNum, songCharacters[num]);
+			addSong(song, weekNum, songCharacters[num[0]], songColor[num[0]]);
 
 			if (songCharacters.length != 1)
-				num++;
+				num[0]++;
+			if (songColor.length != 1)
+				num[0]++;
 		}
 	}
 
 	override function update(elapsed:Float)
 	{
+		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
+			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+		
 		super.update(elapsed);
 
+		//FlxTween.color(bg, 0.35, bg.color, mainColor);
+
+		//I AM SO SORRY FOR THIS BUT IT WORKS I GUESS
+		if (curSelected <= 0)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.PINK);
+		}else if (curSelected <= 3)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(129, 100, 223));
+		}else if (curSelected <= 6)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(30, 45, 60));
+		}else if (curSelected <= 9)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(111, 19, 60));
+		}else if (curSelected <= 12)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(203, 113, 170));
+		}else if (curSelected <= 15)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(141, 165, 206));
+		}else if (curSelected <= 18)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(206, 106, 169));
+		}else if (curSelected <= 21)
+		{
+			FlxTween.color(bg, 0.35, bg.color, FlxColor.GRAY);
+		}
+
+		
 		if (FlxG.sound.music.volume < 0.7)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
+		
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.4));
 
@@ -266,10 +310,13 @@ class FreeplayState extends MusicBeatState
 		NGio.logEvent('Fresh');
 		#end
 
+		FlxG.log.add(mainColor);
+
 		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
 		curSelected += change;
+
 
 		if (curSelected < 0)
 			curSelected = songs.length - 1;
@@ -282,6 +329,8 @@ class FreeplayState extends MusicBeatState
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		// lerpScore = 0;
 		#end
+
+		mainColor = songs[curSelected].songColor;
 
 		#if PRELOAD_ALL
 		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
@@ -318,11 +367,13 @@ class SongMetadata
 	public var songName:String = "";
 	public var week:Int = 0;
 	public var songCharacter:String = "";
+	public var songColor:FlxColor = FlxColor.WHITE;
 
-	public function new(song:String, week:Int, songCharacter:String)
+	public function new(song:String, week:Int, songCharacter:String, songColor:FlxColor)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
+		this.songColor = songColor;
 	}
 }
