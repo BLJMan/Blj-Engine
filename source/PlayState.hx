@@ -1636,8 +1636,8 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
+		iconP1.setGraphicSize(Std.int(FlxMath.lerp(155, iconP1.width, 0.80)));
+		iconP2.setGraphicSize(Std.int(FlxMath.lerp(155, iconP2.width, 0.80)));
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
@@ -2618,6 +2618,21 @@ class PlayState extends MusicBeatState
 			// dad.dance();
 		}
 
+		if(SONG.song.toLowerCase() == 'stress' && curStep >= 378 && curStep < 383)
+		{
+			camGame.zoom += 0.050;
+			camHUD.zoom += 0.05;
+		}
+
+		if(SONG.song.toLowerCase() == 'stress' && curStep >= 1311 && curStep < 1343)
+		{
+			camZooming = false;
+		}else 
+		{
+			camZooming = true;
+		}
+
+
 		if(SONG.song.toLowerCase() == 'stress')
 		{
 			//RIGHT
@@ -2746,14 +2761,20 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03;
 		}
 
-		if (camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0)
+		if (curSong.toLowerCase() == 'stress' && curBeat >= 96 && curBeat < 160)
 		{
-			FlxG.camera.zoom += 0.015;
-			camHUD.zoom += 0.03;
+			camGame.zoom += 0.015;
+			camHUD.zoom += 0.044;
 		}
 
-		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+		if (camZooming && FlxG.camera.zoom < 1.35 && curBeat % 4 == 0)
+		{
+			FlxG.camera.zoom += 0.020;
+			camHUD.zoom += 0.045;
+		}
+
+		iconP1.setGraphicSize(Std.int(iconP1.width + 40));
+		iconP2.setGraphicSize(Std.int(iconP2.width + 40));
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
