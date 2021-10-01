@@ -56,7 +56,7 @@ class KeyBindMenu extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.18));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = true;
+		bg.antialiasing = FlxG.save.data.antialiasing;
 		bg.color = 0xFFea71fd;
 		add(bg);
 
@@ -90,6 +90,11 @@ class KeyBindMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+        if (FlxG.keys.justPressed.F)
+		{
+			FlxG.fullscreen = !FlxG.fullscreen;
+		}
+        
         if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
 			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
         
@@ -169,7 +174,7 @@ class KeyBindMenu extends MusicBeatState
 
             var textStart = (i == curSelected) ? ">" : "  ";
             keyTextDisplay.text += textStart + keyText[i] + ": " + ((keys[i] != keyText[i]) ? (keys[i]) : "" ) + " \n";
-            keyTextDisplay.antialiasing = true;
+            keyTextDisplay.antialiasing = FlxG.save.data.antialiasing;
 
         }
 

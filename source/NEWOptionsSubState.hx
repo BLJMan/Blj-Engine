@@ -30,7 +30,14 @@ class NEWOptionsSubState extends MusicBeatState
 	{
 
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		controlsStrings = CoolUtil.coolStringFile((FlxG.save.data.ghost ? 'New Input' : 'Old Input') + "\n" + (FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll') + "\n" + (FlxG.save.data.botplay ? 'Botplay on' : 'Botplay off') + "\n" + (FlxG.save.data.showMiss ? 'Show Miss Counter' : 'Do not Show Miss Counter') + "\n" + "(shift) to change FPS");
+		controlsStrings = CoolUtil.coolStringFile(
+			(FlxG.save.data.ghost ? 'New Input' : 'Old Input') + "\n" + 
+			(FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll') + "\n" + 
+			(FlxG.save.data.botplay ? 'Botplay on' : 'Botplay off') + "\n" + 
+			(FlxG.save.data.showMiss ? 'Show Miss Counter' : 'Hide Miss Counter') + "\n" + 
+			(FlxG.save.data.showtime ? 'Show song time' : 'Hide song time') + "\n" +
+			(FlxG.save.data.antialiasing ? 'antialiasing' : 'no antialiasing') + "\n" + 
+			"(shift) to change FPS");
 		
 		trace(controlsStrings);
 
@@ -38,7 +45,7 @@ class NEWOptionsSubState extends MusicBeatState
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.antialiasing = true;
+		menuBG.antialiasing = FlxG.save.data.antialiasing;
 		add(menuBG);
 
 		grpControls = new FlxTypedGroup<Alphabet>();
@@ -78,6 +85,11 @@ class NEWOptionsSubState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.F)
+		{
+			FlxG.fullscreen = !FlxG.fullscreen;
+		}
 
 			fpsText.text = "(SHIFT + Left, Right) | FPS: " + FlxG.save.data.FPS;
 
@@ -134,7 +146,7 @@ class NEWOptionsSubState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
-				if (curSelected != 4)
+				if (curSelected != 6)
 					grpControls.remove(grpControls.members[curSelected]);
 				switch(curSelected)
 				{
@@ -183,11 +195,25 @@ class NEWOptionsSubState extends MusicBeatState
                         }*/
 					case 3:
 						FlxG.save.data.showMiss = !FlxG.save.data.showMiss;
-						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.showMiss ? 'Show Miss Counter' : 'Do not Show Miss Counter'), true, false);
+						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.showMiss ? 'Show Miss Counter' : 'Hide Miss Counter'), true, false);
 						ctrl.isMenuItem = true;
 						ctrl.targetY = curSelected - 3;
 						grpControls.add(ctrl);
                         trace(FlxG.save.data.showMiss);
+					case 4:
+						FlxG.save.data.showtime = !FlxG.save.data.showtime;
+						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.showtime ? 'Show Song Time' : 'Hide Song Time'), true, false);
+						ctrl.isMenuItem = true;
+						ctrl.targetY = curSelected - 4;
+						grpControls.add(ctrl);
+                        trace(FlxG.save.data.showtime);
+					case 5:
+						FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
+						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.antialiasing ? 'antialiasing' : 'no antialiasing'), true, false);
+						ctrl.isMenuItem = true;
+						ctrl.targetY = curSelected - 5;
+						grpControls.add(ctrl);
+                        trace(FlxG.save.data.antialiasing);
 				}
 			}
 	}
