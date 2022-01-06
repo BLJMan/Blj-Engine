@@ -1,5 +1,11 @@
 package;
 
+import flixel.util.FlxTimer;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.effects.FlxFlicker;
+import flixel.FlxObject;
+import flixel.math.FlxPoint;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -16,19 +22,24 @@ class OtherOptionsSubState extends MusicBeatState
 
 	private var grpControls:FlxTypedGroup<Alphabet>;
 
+	var camFollow:FlxObject;
+
 	var menuItems:Array<String> = ['preferences', 'controls', 'about', 'exit'];
 
 	var notice:FlxText;
 
 	override function create()
 	{
+		camFollow = new FlxObject(0, 0, 1, 1);
+		add(camFollow);
+
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic('assets/images/menuDesat.png');
 		//controlsStrings = CoolUtil.coolTextFile('assets/data/controls.txt');
 		menuBG.color = 0xFFea71fd;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CoolThings.antialiasing;
 		add(menuBG);
 
 		grpControls = new FlxTypedGroup<Alphabet>();
@@ -45,46 +56,97 @@ class OtherOptionsSubState extends MusicBeatState
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
 		}
 
-		#if mobileC
-		addVirtualPad(UP_DOWN, A_B);
-		#end
-
 		changeSelection();
+
+		//FlxG.camera.follow(camFollow, null, 0.06);
 		
 		super.create();
 	}
 
+	var canChange = true;
+
 	override function update(elapsed:Float)
 	{
-		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
-			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
+
+		if (FlxG.keys.justPressed.SEVEN)
+			openSubState(new ColorsSubState());
 		
 		super.update(elapsed);
 		if (controls.ACCEPT)
 		{
+			canChange = false;
+			
+			FlxG.sound.play(Paths.sound('confirmMenu'));
+
 			var daSelected:String = menuItems[curSelected];
 
-			switch (daSelected)
+			new FlxTimer().start(0.6, function(_)
 			{
-				case "preferences":
-					FlxG.switchState(new NEWOptionsSubState());
-				case "controls":
-					FlxG.switchState(new KeyBindMenu());
-				case "about":
-					//FlxG.switchState(new AboutState());
-				case "exit":
-					FlxG.switchState(new MainMenuState());
+				switch (daSelected)
+				{
+					case "preferences":
+						FlxG.switchState(new NEWOptionsSubState());
+					case "controls":
+						FlxG.switchState(new KeyBindMenu());
+					case "colors": 
+						openSubState(new ColorsSubState());
+					case "about":
+						FlxG.switchState(new AboutSubState());
+					case "notes":
+						FlxG.switchState(new ChangeNotesState());
+					case "exit":
+						FlxG.switchState(new MainMenuState());
+				}
+			});
+			
+
+			/*grpControls.forEach(function(shit:Alphabet) 
+			{
+				if (curSelected != menuItems[curSelected])
+				{
+					FlxTween.tween(shit, {alpha: 0}, 0.4, {ease: FlxEase.quadOut,onComplete: function(twn:FlxTween)
+					{
+						shit.kill();
+					}});
+
+					trace(curSelected + " " + shit.);
+				}else
+				{
+					FlxFlicker.flicker(shit, 1, 0.06, false, false, function(flick:FlxFlicker)
+					{
+						var daSelected:String = menuItems[curSelected];
+
+						switch (daSelected)
+						{
+							case "preferences":
+								FlxG.switchState(new NEWOptionsSubState());
+							case "controls":
+								FlxG.switchState(new KeyBindMenu());
+							case "colors": 
+								openSubState(new ColorsSubState());
+							case "about":
+								FlxG.switchState(new AboutSubState());
+							case "notes":
+								FlxG.switchState(new ChangeNotesState());
+							case "exit":
+								FlxG.switchState(new MainMenuState());
+						}
+					});
+				}
+			});*/
+		}
+
+		if (canChange)
+		{
+			if (controls.BACK #if android || FlxG.android.justReleased.BACK #end) {
+				FlxG.switchState(new MainMenuState());
 			}
-		}
 
-		if (controls.BACK #if android || FlxG.android.justReleased.BACK #end) {
-			FlxG.switchState(new MainMenuState());
+			if (controls.UP_P)
+				changeSelection(-1);
+			if (controls.DOWN_P)
+				changeSelection(1);
 		}
-
-		if (controls.UP_P)
-			changeSelection(-1);
-		if (controls.DOWN_P)
-			changeSelection(1);
 
 	}
 
@@ -103,6 +165,8 @@ class OtherOptionsSubState extends MusicBeatState
 
 		for (item in grpControls.members)
 		{
+			camFollow.setPosition(item.getGraphicMidpoint().y);
+
 			item.targetY = bullShit - curSelected;
 			bullShit++;
 
