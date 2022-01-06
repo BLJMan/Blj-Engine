@@ -203,7 +203,7 @@ class OptionsSubState extends MusicBeatState
 			txt.color = FlxColor.WHITE;
 			txt.antialiasing = true;
 			
-			if (FlxG.save.data.ghost)
+			if (CoolThings.ghost)
 			{
 				//txt.color = FlxColor.YELLOW;
 				selector.color = FlxColor.GRAY;
@@ -213,7 +213,7 @@ class OptionsSubState extends MusicBeatState
 				selector.color = FlxColor.RED;
 			}
 
-			if (FlxG.save.data.downscroll)
+			if (CoolThings.downscroll)
 			{
 				//txt.color = FlxColor.YELLOW;
 				selector2.color = FlxColor.RED;
@@ -245,26 +245,26 @@ class OptionsSubState extends MusicBeatState
 
 				case "OLD INPUT":
 				{
-					if (FlxG.save.data.ghost)
+					if (CoolThings.ghost)
 					{
-						FlxG.save.data.ghost = false;
+						CoolThings.ghost = false;
 					}else
 					{
-						FlxG.save.data.ghost = true;
+						CoolThings.ghost = true;
 					}
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					FlxFlicker.flicker(selector, 1, 0.06, true, false, function(flick:FlxFlicker){});
 				}
 				case "DOWNSCROLL":
 				{
-					if (FlxG.save.data.downscroll)
+					if (CoolThings.downscroll)
 					{
-						FlxG.save.data.downscroll = false;
+						CoolThings.downscroll = false;
 					}else
 					{
-						FlxG.save.data.downscroll = true;
+						CoolThings.downscroll = true;
 					}
-					trace(FlxG.save.data.downscroll);
+					trace(CoolThings.downscroll);
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					FlxFlicker.flicker(selector2, 1, 0.06, true, false, function(flick:FlxFlicker){});
 				}

@@ -94,11 +94,11 @@ class StoryMenuState extends MusicBeatState
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);
 		scoreText.setFormat("VCR OSD Mono", 32);
-		scoreText.antialiasing = FlxG.save.data.antialiasing;
+		scoreText.antialiasing = CoolThings.antialiasing;
 
 		txtWeekTitle = new FlxText(FlxG.width * 0.7, 10, 0, "", 32);
 		txtWeekTitle.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, RIGHT);
-		txtWeekTitle.antialiasing = FlxG.save.data.antialiasing;
+		txtWeekTitle.antialiasing = CoolThings.antialiasing;
 		txtWeekTitle.alpha = 0.7;
 
 		var rankText:FlxText = new FlxText(0, 10);
@@ -131,12 +131,12 @@ class StoryMenuState extends MusicBeatState
 		for (i in 0...weekData.length)
 		{
 			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i);
-			weekThing.y += ((weekThing.height + 20) * i);
+			weekThing.y += (((weekThing.height + 20) * i));
 			weekThing.targetY = i;
 			grpWeekText.add(weekThing);
 
 			weekThing.screenCenter(X);
-			weekThing.antialiasing = FlxG.save.data.antialiasing;
+			weekThing.antialiasing = CoolThings.antialiasing;
 			// weekThing.updateHitbox();
 
 			// Needs an offset thingie
@@ -147,7 +147,7 @@ class StoryMenuState extends MusicBeatState
 				lock.animation.addByPrefix('lock', 'lock');
 				lock.animation.play('lock');
 				lock.ID = i;
-				lock.antialiasing = FlxG.save.data.antialiasing;
+				lock.antialiasing = CoolThings.antialiasing;
 				grpLocks.add(lock);
 			}
 		}
@@ -168,7 +168,7 @@ class StoryMenuState extends MusicBeatState
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
 		leftArrow.animation.play('idle');
-		leftArrow.antialiasing = FlxG.save.data.antialiasing;
+		leftArrow.antialiasing = CoolThings.antialiasing;
 		difficultySelectors.add(leftArrow);
 
 		sprDifficulty = new FlxSprite(leftArrow.x + 130, leftArrow.y);
@@ -177,7 +177,7 @@ class StoryMenuState extends MusicBeatState
 		sprDifficulty.animation.addByPrefix('normal', 'NORMAL');
 		sprDifficulty.animation.addByPrefix('hard', 'HARD');
 		sprDifficulty.animation.play('easy');
-		sprDifficulty.antialiasing = FlxG.save.data.antialiasing;
+		sprDifficulty.antialiasing = CoolThings.antialiasing;
 		changeDifficulty();
 
 		difficultySelectors.add(sprDifficulty);
@@ -187,7 +187,7 @@ class StoryMenuState extends MusicBeatState
 		rightArrow.animation.addByPrefix('idle', 'arrow right');
 		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
 		rightArrow.animation.play('idle');
-		rightArrow.antialiasing = FlxG.save.data.antialiasing;
+		rightArrow.antialiasing = CoolThings.antialiasing;
 		difficultySelectors.add(rightArrow);
 
 		trace("Line 150");
@@ -198,7 +198,7 @@ class StoryMenuState extends MusicBeatState
 		txtTracklist = new FlxText(FlxG.width * 0.05, yellowBG.x + yellowBG.height + 100, 0, "Tracks", 32);
 		txtTracklist.alignment = CENTER;
 		txtTracklist.font = rankText.font;
-		txtTracklist.antialiasing = FlxG.save.data.antialiasing;
+		txtTracklist.antialiasing = CoolThings.antialiasing;
 		txtTracklist.color = 0xFFe55777;
 		add(txtTracklist);
 		// add(rankText);
@@ -209,8 +209,10 @@ class StoryMenuState extends MusicBeatState
 
 		trace("Line 165");
 
-		grpWeekCharacters.members[1].bopHead();
-		grpWeekCharacters.members[2].bopHead();
+		//grpWeekCharacters.members[1].bopHead();
+		//grpWeekCharacters.members[2].bopHead();
+
+		Conductor.changeBPM(102);
 
 		super.create();
 	}
@@ -222,11 +224,8 @@ class StoryMenuState extends MusicBeatState
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
 
-		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
-			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
-
 		// scoreText.setFormat('VCR OSD Mono', 32);
-		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.5));
+		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.2));
 
 		scoreText.text = "WEEK SCORE:" + lerpScore;
 
@@ -285,6 +284,9 @@ class StoryMenuState extends MusicBeatState
 			FlxG.switchState(new MainMenuState());
 		}
 
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
+
 		super.update(elapsed);
 	}
 
@@ -307,6 +309,8 @@ class StoryMenuState extends MusicBeatState
 
 			PlayState.storyPlaylist = weekData[curWeek];
 			PlayState.isStoryMode = true;
+			PlayState.isFreeplayMenu = false;
+			PlayState.isStoryMenu = true;
 			selectedWeek = true;
 
 			var diffic = "";
@@ -414,7 +418,7 @@ class StoryMenuState extends MusicBeatState
 		grpWeekCharacters.members[1].setCharacter(weekCharacters[curWeek][1]);
 		grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
 
-		grpWeekCharacters.members[0].bopHead();
+		//grpWeekCharacters.members[0].bopHead();
 		
 
 

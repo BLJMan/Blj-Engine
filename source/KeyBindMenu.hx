@@ -32,6 +32,7 @@ class KeyBindMenu extends MusicBeatState
     var defaultKeys:Array<String> = ["A", "S", "W", "D", "R"];
     var curSelected:Int = 0;
 
+
     var keys:Array<String> = [FlxG.save.data.leftBind,
                               FlxG.save.data.downBind,
                               FlxG.save.data.upBind,
@@ -45,6 +46,7 @@ class KeyBindMenu extends MusicBeatState
 
 	override function create()
 	{	
+
 	
 		//FlxG.sound.playMusic('assets/music/configurator' + TitleState.soundExt);
 
@@ -56,13 +58,13 @@ class KeyBindMenu extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.18));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = FlxG.save.data.antialiasing;
+		bg.antialiasing = CoolThings.antialiasing;
 		bg.color = 0xFFea71fd;
 		add(bg);
 
         keyTextDisplay = new FlxText(0, 0, 1280, "", 72);
 		keyTextDisplay.scrollFactor.set(0, 0);
-		keyTextDisplay.setFormat("assets/fonts/funkin.otf", 72, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		keyTextDisplay.setFormat("assets/fonts/vcr.ttf", 50, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		keyTextDisplay.borderSize = 3;
 		keyTextDisplay.borderQuality = 1;
         add(keyTextDisplay);
@@ -94,36 +96,35 @@ class KeyBindMenu extends MusicBeatState
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
-        
-        if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
-			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
-        
-
+    
         switch(state){
 
             case "select":
                 if (controls.UP_P)
 				{
-					FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeItem(-1);
 				}
 
 				if (controls.DOWN_P)
 				{
-					FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeItem(1);
 				}
 
-                if (FlxG.keys.justPressed.ENTER){
-                    FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+                if (FlxG.keys.justPressed.ENTER)
+                {
+                    FlxG.sound.play(Paths.sound('scrollMenu'));
                     state = "input";
                 }
-                else if(FlxG.keys.justPressed.ESCAPE || FlxG.gamepads.anyJustPressed(ANY)){
-                    FlxG.sound.play('assets/sounds/cancelMenu.ogg');
+                else if(FlxG.keys.justPressed.ESCAPE || FlxG.gamepads.anyJustPressed(ANY))
+                {
+                    FlxG.sound.play(Paths.sound('cancelMenu'));
                     reset();
                 }
-				else if (FlxG.keys.justPressed.BACKSPACE){
-                    FlxG.sound.play('assets/sounds/cancelMenu.ogg');
+				else if (FlxG.keys.justPressed.BACKSPACE)
+                {
+                    FlxG.sound.play(Paths.sound('cancelMenu'));
                     quit();
                 }
 
@@ -134,17 +135,20 @@ class KeyBindMenu extends MusicBeatState
                 state = "waiting";
 
             case "waiting":
-                if(FlxG.keys.justPressed.ESCAPE){
+                if(FlxG.keys.justPressed.ESCAPE)
+                {
                     keys[curSelected] = tempKey;
                     state = "select";
-                    FlxG.sound.play('assets/sounds/cancelMenu.ogg');
+                    FlxG.sound.play(Paths.sound('scrollMenu'));
                 }
-                else if(FlxG.keys.justPressed.ENTER){
+                else if(FlxG.keys.justPressed.ENTER)
+                {
                     addKey(defaultKeys[curSelected]);
                     saveKeys();
                     state = "select";
                 }
-                else if(FlxG.keys.justPressed.ANY){
+                else if(FlxG.keys.justPressed.ANY)
+                {
                     addKey(FlxG.keys.getIsDown()[0].ID.toString());
                     saveKeys();
                     state = "select";
@@ -174,7 +178,7 @@ class KeyBindMenu extends MusicBeatState
 
             var textStart = (i == curSelected) ? ">" : "  ";
             keyTextDisplay.text += textStart + keyText[i] + ": " + ((keys[i] != keyText[i]) ? (keys[i]) : "" ) + " \n";
-            keyTextDisplay.antialiasing = FlxG.save.data.antialiasing;
+            keyTextDisplay.antialiasing = false;
 
         }
 
@@ -249,11 +253,11 @@ class KeyBindMenu extends MusicBeatState
 
         if(shouldReturn){
             keys[curSelected] = r;
-            FlxG.sound.play('assets/sounds/scrollMenu.ogg');
+            //FlxG.sound.play('assets/sounds/scrollMenu.ogg');
         }
         else{
             keys[curSelected] = tempKey;
-            FlxG.sound.play('assets/sounds/cancelMenu.ogg');
+            //FlxG.sound.play('assets/sounds/cancelMenu.ogg');
             keyWarning.alpha = 1;
             warningTween.cancel();
             warningTween = FlxTween.tween(keyWarning, {alpha: 0}, 0.5, {ease: FlxEase.circOut, startDelay: 2});
@@ -269,5 +273,6 @@ class KeyBindMenu extends MusicBeatState
             curSelected = 0;
         if (curSelected < 0)
             curSelected = 4;
+
     }
 }

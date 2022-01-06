@@ -15,7 +15,7 @@ class HealthIcon extends FlxSprite
 		super();
 		loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CoolThings.antialiasing;
 		animation.add('bf', [0, 1], 0, false, isPlayer);
 		animation.add('bf-car', [0, 1], 0, false, isPlayer);
 		animation.add('bf-christmas', [0, 1], 0, false, isPlayer);
@@ -39,6 +39,18 @@ class HealthIcon extends FlxSprite
 		animation.add("gf-tankman", [10, 11], 0, false, isPlayer);
 		animation.add("bf-holding-gf", [0, 1], 0, false, isPlayer);
 		animation.add("picoSpeaker", [10, 11], 0, false, isPlayer);
+		animation.add("chara", [10, 11], 0, false, isPlayer);
+		animation.add("crewmate", [10, 11], 0, false, isPlayer);
+		animation.add("whitty", [10, 11], 0, false, isPlayer);
+		animation.add("sonicfun", [10, 11], 0, false, isPlayer);
+		animation.add("glitched-bob", [10, 11], 0, false, isPlayer);
+		animation.add("sonic.exe", [10, 11], 0, false, isPlayer);
+		animation.add("beast", [10, 11], 0, false, isPlayer);
+		animation.add("tails", [10, 11], 0, false, isPlayer);
+		animation.add("knucks", [10, 11], 0, false, isPlayer);
+		animation.add("egg", [10, 11], 0, false, isPlayer);
+		animation.add("bfTT", [0, 1], 0, false, isPlayer);
+		animation.add("bb", [10, 11], 0, false, isPlayer);
 		animation.play(char);
 		scrollFactor.set();
 	}

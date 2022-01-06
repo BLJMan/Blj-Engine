@@ -490,7 +490,10 @@ class Controls extends FlxActionSet
 
 	public function setKeyboardScheme(scheme:KeyboardScheme, reset = true)
 	{
-		loadKeyBinds();
+		#if !html5
+			loadKeyBinds();
+		#end
+		
 		 /*if (reset)
 			removeKeyboard();
 
@@ -572,7 +575,7 @@ class Controls extends FlxActionSet
 		//trace(FlxKey.fromString(FlxG.save.data.upBind));
 
 		removeKeyboard();
-		KeyBinds.keyCheck();
+		//KeyBinds.keyCheck();
 
 		inline bindKeys(Control.UP, [FlxKey.fromString(FlxG.save.data.upBind), FlxKey.UP]);
 		inline bindKeys(Control.DOWN, [FlxKey.fromString(FlxG.save.data.downBind), FlxKey.DOWN]);

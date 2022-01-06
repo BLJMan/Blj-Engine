@@ -1,5 +1,8 @@
 package;
 
+import flixel.util.FlxTimer;
+import flixel.FlxGame;
+import openfl.Lib;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -36,10 +39,17 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 
 	var keyShit = new KeyBindMenu();
+
+	public var animOffsets:Map<String, Array<Dynamic>>;
 	
 
 	override function create()
 	{
+		FlxG.save.data.restarted = false;
+		PlayState.freeplayShit = false;
+
+		animOffsets = new Map<String, Array<Dynamic>>();
+
 		#if desktop
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
@@ -78,7 +88,7 @@ class MainMenuState extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.2));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = FlxG.save.data.antialiasing;
+		bg.antialiasing = CoolThings.antialiasing;
 		add(bg);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -91,7 +101,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = FlxG.save.data.antialiasing;
+		magenta.antialiasing = CoolThings.antialiasing;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		// magenta.scrollFactor.set();
@@ -99,26 +109,26 @@ class MainMenuState extends MusicBeatState
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
 
-		var tex = Paths.getSparrowAtlas('FNF_main_menu_assets');
+		var tex = Paths.getSparrowAtlas('main_menu');
 
 		for (i in 0...optionShit.length)
 		{
 			var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 160));
 			menuItem.frames = tex;
-			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
-			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
+			menuItem.animation.addByPrefix('idle', optionShit[i] + " idle", 24);
+			menuItem.animation.addByPrefix('selected', optionShit[i] + " selected", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
 			menuItem.screenCenter(X);
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set();
-			menuItem.antialiasing = FlxG.save.data.antialiasing;
+			menuItem.antialiasing = CoolThings.antialiasing;
 			menuItem.alpha = 0;
 			menuItem.y = (menuItem.y - 100);
-			FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 1, {ease: FlxEase.elasticOut, startDelay: 0.5 + (0.075 * i)});
+			FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 0.7, {ease: FlxEase.circInOut, startDelay: (0.075 * i)});
 		}
 
-		FlxG.camera.follow(camFollow, null, 0.06);
+		FlxG.camera.follow(camFollow, null, 0.06 * (60 / Lib.current.stage.frameRate));
 
 		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, Application.current.meta.get('version') + " | FNF v0.2.7.1", 12);
 		versionShit.scrollFactor.set();
@@ -168,14 +178,14 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		if (FlxG.keys.justPressed.V)
+			FlxG.switchState(new LatencyState());
 		if (FlxG.keys.justPressed.F)
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
 		
 		//keyShit.saveKeys();
-
-		//openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 
 		/*if (FlxG.keys.pressed.RIGHT)
 		{
@@ -188,9 +198,6 @@ class MainMenuState extends MusicBeatState
 			FlxG.save.data.offset--;
 			trace(FlxG.save.data.offset);
 		}*/
-
-		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
-			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
 
 		if (FlxG.sound.music.volume < 0.8)
 		{

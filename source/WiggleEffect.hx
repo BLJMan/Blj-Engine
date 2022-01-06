@@ -1,6 +1,7 @@
 package;
 
 // STOLEN FROM HAXEFLIXEL DEMO LOL
+import flixel.FlxG;
 import flixel.system.FlxAssets.FlxShader;
 
 enum WiggleEffectType
@@ -131,3 +132,4 @@ class WiggleShader extends FlxShader
 		super();
 	}
 }
+
