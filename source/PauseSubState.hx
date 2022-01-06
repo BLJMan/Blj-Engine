@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.frames.FlxAtlasFrames;
 import Controls.Control;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -44,10 +45,27 @@ class PauseSubState extends MusicBeatSubstate
 
 		FlxG.sound.list.add(pauseMusic);
 
-		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		bg.alpha = 0;
-		bg.scrollFactor.set();
-		add(bg);
+		var bg:FlxSprite;
+
+		if (CoolThings.secretShh)
+		{
+			bg = new FlxSprite(400, 170);
+			bg.frames = Paths.getSparrowAtlas('rick');
+			bg.animation.addByPrefix('lol', 'Simbolo 1', 60, true);
+			bg.animation.play('lol');
+			bg.scale.set(3,2);
+			bg.alpha = 0.4;
+			//bg.scrollFactor.set(0.6, 0.6);
+			bg.antialiasing = FlxG.save.data.antialiasing;
+			add(bg);	
+		}else 
+		{
+			bg = new FlxSprite();
+			bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+			bg.alpha = 0;
+			bg.scrollFactor.set();
+			add(bg);
+		}
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 		levelInfo.text += PlayState.SONG.song;
@@ -85,7 +103,7 @@ class PauseSubState extends MusicBeatSubstate
 		practiceText.x = FlxG.width - (practiceText.width + 20);
 		botText.x = FlxG.width - (botText.width + 20);
 
-		FlxTween.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
+		FlxTween.tween(bg, {alpha: 0.4}, 0.4, {ease: FlxEase.quartInOut});
 		FlxTween.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
 		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
 
@@ -116,7 +134,7 @@ class PauseSubState extends MusicBeatSubstate
 			practiceText.alpha = 0;
 		}
 
-		if (FlxG.save.data.botplay)
+		if (CoolThings.botplay)
 		{
 			botText.alpha = 1;
 		}
@@ -177,18 +195,34 @@ class PauseSubState extends MusicBeatSubstate
 					}
 					trace("practice : " + FlxG.save.data.practice);
 				case "Botplay": 
-					if (FlxG.save.data.botplay)
+					if (CoolThings.botplay)
 					{
-						FlxG.save.data.botplay = false;
+						CoolThings.botplay = false;
 					}else
 					{
-						FlxG.save.data.botplay = true;
+						CoolThings.botplay = true;
 					}
-					trace("botplay : " + FlxG.save.data.botplay);
+					trace("botplay : " + CoolThings.botplay);
+				case "Downscroll": 
+					if (CoolThings.downscroll)
+					{
+						CoolThings.downscroll = false;
+					}else
+					{
+						CoolThings.downscroll = true;
+					}
+					trace("downscroll : " + CoolThings.downscroll);
 				case "Restart Song":
 					FlxG.resetState();
 				case "Exit to menu":
-					FlxG.switchState(new MainMenuState());
+				{
+					if (PlayState.isStoryMenu)
+						FlxG.switchState(new StoryMenuState());
+					else if (PlayState.isFreeplayMenu)
+						FlxG.switchState(new FreeplayState());
+					else 
+						FlxG.switchState(new MainMenuState());
+				}
 				case 'BACK':
 					menuItems = menuItemsOG;
 					regenMenu();
