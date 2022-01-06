@@ -1,57 +1,76 @@
 package;
 
-import flixel.FlxSprite;
 import flixel.FlxG;
+import flixel.FlxSprite;
 
-/*class NoteSplash extends FlxSprite
+class NoteSplash extends FlxSprite
 {
-    private var lastNoteType:Int = -1;
+	var colorSwap:ColorSwap;
 
-    public function new(x:Float = 0, y:Float = 0, ?note:Int = 0)
-    {
-        super(x, y);
+	public function new(xPos:Float, yPos:Float, ?c:Int)
+	{
+		if (c == null)
+			c = 0;
+		super(xPos, yPos);
 
-        var skin:String = 'noteSplashes';
-        if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) skin = PlayState.SONG.splashSkin;
-        
-        loadAnims(skin);
+		if (!CoolThings.newSplash)
+		{
+			frames = Paths.getSparrowAtlas('UI/noteSplashes', 'shared');
+			animation.addByPrefix("note1-0", "note impact 1  blue", 24, false);
+			animation.addByPrefix("note2-0", "note impact 1 green", 24, false);
+			animation.addByPrefix("note0-0", "note impact 1 purple", 24, false);
+			animation.addByPrefix("note3-0", "note impact 1 red", 24, false);
 
-        setupNoteSplash(x, y, note);
-    }
-
-    public function setupNoteSplash(x:Float, y:Float, note:Int = 0, noteType:Int = 0)
-    {
-        setPosition(x - Note.swagWidth * 0.95, y - Note.swagWidth);
-		alpha = 0.6;
-
-        if(lastNoteType != noteType) {
-			var skin:String = 'noteSplashes';
-			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) skin = PlayState.SONG.splashSkin;
-
-			loadAnims(skin);
-
-			lastNoteType = noteType;
+			animation.addByPrefix("note1-1", "note impact 2 blue", 24, false);
+			animation.addByPrefix("note2-1", "note impact 2 green", 24, false);
+			animation.addByPrefix("note0-1", "note impact 2 purple", 24, false);
+			animation.addByPrefix("note3-1", "note impact 2 red", 24, false);
+		}else 
+		{
+			frames = Paths.getSparrowAtlas('UI/AllnoteSplashes', 'shared');
+			animation.addByPrefix("note1-0", "BlueC instance 1", 24, false);
+			animation.addByPrefix("note2-0", "GreenC instance 1", 24, false);
+			animation.addByPrefix("note0-0", "PurpC instance 1", 24, false);
+			animation.addByPrefix("note3-0", "RedC instance 1", 24, false);
 		}
 
-        var animNum:Int = FlxG.random.int(1, 2);
-		animation.play('note' + note + '-' + animNum, true);
-		animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
-    }
-
-    function loadAnims(skin:String) 
-    {
-		frames = Paths.getSparrowAtlas(skin);
-		for (i in 1...3) {
-			animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
-			animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
-			animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
-			animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
-		}
+		setupNoteSplash(xPos, xPos, c);
 	}
 
-    override function update(elapsed:Float) {
-		if(animation.curAnim.finished) kill();
+	public function setupNoteSplash(xPos:Float, yPos:Float, ?c:Int)
+	{
+		if (c == null)
+			c = 0;
 
+		colorSwap = new ColorSwap();
+		colorSwap.hue = CoolUtil.arrowHSV[c % 4][0] / 360;
+		colorSwap.saturation = CoolUtil.arrowHSV[c % 4][1] / 100;
+		colorSwap.brightness = CoolUtil.arrowHSV[c % 4][2] / 100;
+		shader = colorSwap.shader;
+
+		setPosition(xPos, yPos);
+		if (!CoolThings.newSplash)
+			alpha = 0.7;
+		else 
+			alpha = 0.6;
+
+		if (!CoolThings.newSplash)
+		{
+			animation.play("note" + c + "-" + FlxG.random.int(0, 1), true);
+		}else 
+		{
+			animation.play("note" + c + "-0", true);
+		}
+		
+		//animation.curAnim.frameRate = 24 + FlxG.random.int(-3, 3);
+		updateHitbox();
+		offset.set(0.3 * width, 0.3 * height);
+	}
+
+	override public function update(elapsed)
+	{
+		if (animation.curAnim.finished)
+			kill();
 		super.update(elapsed);
 	}
-}*/
+}
