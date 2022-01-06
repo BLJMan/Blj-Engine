@@ -2,6 +2,8 @@
 	"song": {
 		"player1": "bf",
 		"player2": "bf",
+		"gf":"gf",
+"events":[{"name":"New Event","position":128,"value1":null,"value2":"","type":"zoomOnBeat","visPos":"10399,8"},{"name":"New Event","position":384,"value1":null,"value2":"","type":"zoomNormal","visPos":"31175.3,24"},{"name":"New Event","position":768,"value1":null,"value2":"","type":"zoomOnBeat","visPos":"62298.4,48"},{"name":"New Event","position":896,"value1":null,"value2":"","type":"zoomBack","visPos":"72683.4,56"},{"name":"New Event","position":1152,"value1":null,"value2":"","type":"zoomNormal","visPos":"93442.0999999999,72"}],
 		"notes": [
 			{
 				"lengthInSteps": 16,
