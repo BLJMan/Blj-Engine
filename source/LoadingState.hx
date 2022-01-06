@@ -1,5 +1,8 @@
 package;
 
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.util.FlxFSM.FlxFSMTransitionTable;
+import flixel.math.FlxMath;
 import lime.app.Promise;
 import lime.app.Future;
 import flixel.FlxG;
@@ -39,19 +42,23 @@ class LoadingState extends MusicBeatState
 		logo = new FlxSprite(-150, -100);
 		logo.frames = Paths.getSparrowAtlas('logoBumpin');
 		logo.antialiasing = true;
-		logo.animation.addByPrefix('bump', 'logo bumpin', 24);
+		logo.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logo.animation.play('bump');
 		logo.updateHitbox();
+		logo.screenCenter();
+
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
 
-		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
-		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = true;
-		add(gfDance);
+		//gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
+		//gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
+		//gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+		//gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		//gfDance.antialiasing = true;
+		//add(gfDance);
 		add(logo);
+
+		Conductor.changeBPM(102);
 		
 		initSongsManifest().onComplete
 		(
@@ -108,22 +115,38 @@ class LoadingState extends MusicBeatState
 	{
 		super.beatHit();
 		
-		logo.animation.play('bump');
+		logo.animation.play('bump', true);
 		danceLeft = !danceLeft;
 		
-		if (danceLeft)
+		/*if (danceLeft)
+		{
 			gfDance.animation.play('danceRight');
+		}
 		else
+		{
 			gfDance.animation.play('danceLeft');
+		}*/
 	}
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
+
+		if (FlxG.keys.justPressed.ESCAPE)
+			FlxG.switchState(new MainMenuState());
+		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 0.95);
+		if (controls.ACCEPT)
+			FlxG.camera.zoom += 0.03;
 		#if debug
 		if (FlxG.keys.justPressed.SPACE)
 			trace('fired: ' + callbacks.getFired() + " unfired:" + callbacks.getUnfired());
 		#end
+
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
 	}
 	
 	function onLoad()
@@ -152,21 +175,27 @@ class LoadingState extends MusicBeatState
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
 		Paths.setCurrentLevel("week" + PlayState.storyWeek);
-		#if NO_PRELOAD_ALL
+		
 		var loaded = isSoundLoaded(getSongPath())
 			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
 			&& isLibraryLoaded("shared");
 		
-		if (!loaded)
-			return new LoadingState(target, stopMusic);
-		#end
+		if (!PlayState.isStoryMode)
+		{ 
+			if (!loaded)
+			{
+				return new LoadingState(target, stopMusic);
+				FlxTransitionableState.skipNextTransIn;
+			}
+		}
+		
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 		
 		return target;
 	}
 	
-	#if NO_PRELOAD_ALL
+	
 	static function isSoundLoaded(path:String):Bool
 	{
 		return Assets.cache.hasSound(path);
@@ -176,7 +205,7 @@ class LoadingState extends MusicBeatState
 	{
 		return Assets.getLibrary(library) != null;
 	}
-	#end
+	
 	
 	override function destroy()
 	{
