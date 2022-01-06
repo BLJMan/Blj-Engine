@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
@@ -14,7 +15,7 @@ class Main extends Sprite
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
-	var framerate:Int = 60; // How many frames per second the game should run at.
+	var framerate:Int = 120; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 
@@ -48,6 +49,7 @@ class Main extends Sprite
 
 		setupGame();
 	}
+	
 
 	private function setupGame():Void
 	{
@@ -71,6 +73,24 @@ class Main extends Sprite
 
 		#if !mobile
 		addChild(new FPS(10, 3, 0xFFFFFF));
+		addChild(new MemoryCounter(10, 3, 0xffffff));
 		#end
+	}
+
+	public static function dumpCache() // THIS ENGINE IS NOT OPTIMIZED AAAA IT CAN USE UP TO 9 FUCKING  G Y G A B Y T E S  OF RAM
+	{
+		@:privateAccess
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+			if (obj != null)
+			{
+				Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
+				obj.destroy();
+			}
+		}
+		Assets.cache.clear("songs");
+		trace("DUMPED CACHE YAY");
 	}
 }
