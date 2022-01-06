@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import lime.utils.Assets;
 
 using StringTools;
@@ -12,6 +13,12 @@ class CoolUtil
 		['Normal', ''],
 		['Hard', '-hard']
 	];
+
+	//public static var thing = openfl.Assets.getText("assets/data/arrowHSV.txt");
+
+	public static var arrowHSV:Array<Array<Int>> = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
+	public static var fakeArrowHSV:Array<Array<Int>> = [[0, 0, 10], [0, 0, 10], [0, 0, 10], [0, 0, 10]];
+
 
 	public static function difficultyString():String
 	{
@@ -30,6 +37,13 @@ class CoolUtil
 		}
 
 		return daList;
+	}
+
+	public static function boundTo(value:Float, min:Float, max:Float):Float {
+		var newValue:Float = value;
+		if(newValue < min) newValue = min;
+		else if(newValue > max) newValue = max;
+		return newValue;
 	}
 
 	public static function coolStringFile(path:String):Array<String>
