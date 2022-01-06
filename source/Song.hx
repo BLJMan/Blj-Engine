@@ -1,5 +1,6 @@
 package;
 
+import SongEvent.SwagEvent;
 import Section.SwagSection;
 import haxe.Json;
 import haxe.format.JsonParser;
@@ -11,12 +12,16 @@ typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
+	var events:Array<SwagEvent>;
 	var bpm:Int;
 	var needsVoices:Bool;
 	var speed:Float;
 
 	var player1:String;
 	var player2:String;
+	var gf:String;
+	var arrows:String;
+	var stage:String;
 	var validScore:Bool;
 
 	//var splashSkin:String;
@@ -26,19 +31,22 @@ class Song
 {
 	public var song:String;
 	public var notes:Array<SwagSection>;
+	public var events:Array<SwagEvent>;
 	public var bpm:Int;
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
+	public var gf:String = 'gf';
 
 	//public var splashSkin:String;
 
-	public function new(song, notes, bpm)
+	public function new(song, notes, events, bpm)
 	{
 		this.song = song;
 		this.notes = notes;
+		this.events = events;
 		this.bpm = bpm;
 	}
 
