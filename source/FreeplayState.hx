@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxTimer;
 import flixel.tweens.FlxTween;
 #if desktop
 import Discord.DiscordClient;
@@ -12,6 +13,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.system.FlxSound;
 import lime.utils.Assets;
 
 using StringTools;
@@ -30,30 +32,55 @@ class FreeplayState extends MusicBeatState
 	var intendedScore:Int = 0;
 	private var mainColor = FlxColor.WHITE;
 
+	var stupidShit:String = "-------extra-songs";
+
+	var vocals:FlxSound;
+	var inst:FlxSound;
+
+	var scoreBG:FlxSprite;
+
 	private var grpSongs:FlxTypedGroup<Alphabet>;
+	private var grpIcons:FlxTypedGroup<HealthIcon>;
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
 
 	var bg:FlxSprite;
 
+	var leText:String;
+	var text:FlxText;
+	var textBG:FlxSprite;
+
+	var iRestarted = FlxG.save.data.restarted;
+
 	override function create()
 	{
-		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
+		/*var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
 		for (i in 0...initSonglist.length)
 		{
-			songs.push(new SongMetadata(initSonglist[i], 1, 'gf', FlxColor.PINK));
+			songs.push(new SongMetadata("Tutorial", 1, 'gf', FlxColor.PINK));
 			//songs.push(new SongMetadata("eggnog", 5, 'parents-christmas', FlxColor.fromRGB(141, 165, 206)));
 			
+		}*/
+
+		songs.push(new SongMetadata("Tutorial", 1, 'gf', FlxColor.PINK));
+
+		if (PlayState.freeplayShit)
+		{
+			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
 
-		/*if (FlxG.sound.music != null)
+		if (!iRestarted)
 		{
-			if (!FlxG.sound.music.playing)
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-		}*/
-		 
+			if (FlxG.sound.music != null)
+			{
+				if (!FlxG.sound.music.playing)
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			}
+		}
+
+		
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -91,12 +118,17 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
+		songs.push(new SongMetadata("extra-songs", 1, "gf", FlxColor.GRAY));
+
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing  = FlxG.save.data.antialiasing;
+		bg.antialiasing  = CoolThings.antialiasing;
 		add(bg);
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
+
+		grpIcons = new FlxTypedGroup<HealthIcon>();
+		add(grpIcons);
 
 		for (i in 0...songs.length)
 		{
@@ -110,19 +142,26 @@ class FreeplayState extends MusicBeatState
 
 			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);
+			grpIcons.add(icon);
 			add(icon);
 
 			// songText.x += 40;
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
 			// songText.screenCenter(X);
 		}
-
+		
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 		// scoreText.autoSize = false;
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
 		// scoreText.alignment = RIGHT;
 
-		var scoreBG:FlxSprite = new FlxSprite(scoreText.x - 6, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
+		for (i in 0...songs.length)
+		{
+			if (songs[i].songName.toLowerCase() == "extra-songs")
+				iconArray[i].visible = false;
+		}
+
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 
@@ -162,8 +201,59 @@ class FreeplayState extends MusicBeatState
 			trace(md);
 		 */
 
+		textBG = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
+		textBG.alpha = 0.6;
+		add(textBG);
+		leText = "Press SPACE to listen to the selected Song";
+		text = new FlxText(textBG.x - 500, textBG.y + 4, FlxG.width, leText, 18);
+		text.setFormat(Paths.font("funkin.otf"), 18, FlxColor.WHITE, RIGHT);
+		text.antialiasing = CoolThings.antialiasing;
+		text.scrollFactor.set();
+		add(text);
+
 		super.create();
 	}
+
+	function regenMenu():Void 
+	{
+		songs = [];
+
+		canAccept = false;
+		new FlxTimer().start(0.3, function(timr:FlxTimer)
+		{
+			canAccept = true;
+		}, 1);
+
+		for (i in 0...iconArray.length)
+		{
+			iconArray[i].visible = false;
+		}
+
+		for (i in 0...grpSongs.members.length) 
+		{
+			this.grpSongs.remove(this.grpSongs.members[0], true);
+		}
+
+		var initSonglist = CoolUtil.coolTextFile(Paths.txt('extraSonglist'));
+
+		for (i in 0...initSonglist.length)
+		{
+			songs.push(new SongMetadata(initSonglist[i], 1, 'gf', FlxColor.PINK));
+			
+		}
+
+		for (i in 0...songs.length)
+		{
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false);
+			songText.isMenuItem = true;
+			songText.targetY = i;
+			grpSongs.add(songText);
+		}
+		curSelected = 0;
+		changeSelection();
+	}
+
+	var canAccept:Bool = true;
 
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, songColor:FlxColor)
 	{
@@ -190,60 +280,97 @@ class FreeplayState extends MusicBeatState
 		}
 	}
 
+	function playCurSelected()
+	{
+		iRestarted = true;
+
+		#if PRELOAD_ALL
+		
+		#end
+		FlxG.sound.music.stop();
+		//FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0.5);
+		vocals = new FlxSound().loadEmbedded(Paths.voices(songs[curSelected].songName));
+		inst = new FlxSound().loadEmbedded(Paths.inst(songs[curSelected].songName));
+		vocals.play();
+		inst.play();
+		//Conductor.songPosition = inst.time
+		//vocals.time = Conductor.songPosition;
+		leText = "Press SPACE to listen to the selected Song" + " - NOW PLAYING: " + songs[curSelected].songName;
+		text.text = leText;
+		text.x = textBG.x - 400;
+		FlxG.sound.list.add(vocals);
+		FlxG.sound.list.add(inst);
+	}
+
+	function resyncVocals():Void
+	{
+		vocals.pause();
+
+		FlxG.sound.music.play();
+		Conductor.songPosition = FlxG.sound.music.time;
+		vocals.time = Conductor.songPosition;
+		vocals.play();
+	}
+
 	override function update(elapsed:Float)
 	{
+		if (FlxG.keys.justPressed.G)
+		{
+			resyncVocals();
+		}
+
+		if (FlxG.keys.justPressed.SPACE && songs[curSelected].songName.toLowerCase() != stupidShit)
+		{
+			if (vocals != null && inst != null)
+			{
+				vocals.stop();
+				inst.stop();
+			}
+			playCurSelected();
+		}
+
 		if (FlxG.keys.justPressed.F)
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
-		
-		if (openfl.Lib.current.stage.frameRate < FlxG.save.data.FPS)
-			openfl.Lib.current.stage.frameRate = FlxG.save.data.FPS;
-		
+
 		super.update(elapsed);
 
-		//FlxTween.color(bg, 0.35, bg.color, mainColor);
-
-		//I AM SO SORRY FOR THIS BUT IT WORKS I GUESS
-		if (curSelected <= 0)
+		switch (songs[curSelected].songName.toLowerCase())
 		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.PINK);
-		}else if (curSelected <= 3)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(129, 100, 223));
-		}else if (curSelected <= 6)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(30, 45, 60));
-		}else if (curSelected <= 9)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(111, 19, 60));
-		}else if (curSelected <= 12)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(203, 113, 170));
-		}else if (curSelected <= 15)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(141, 165, 206));
-		}else if (curSelected <= 18)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(206, 106, 169));
-		}else if (curSelected <= 21)
-		{
-			FlxTween.color(bg, 0.35, bg.color, FlxColor.GRAY);
+			case 'tutorial':
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.PINK);
+			case 'bopeebo' | 'fresh' | 'dadbattle': 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(129, 100, 223));
+			case 'spookeez' | 'south' | 'monster' : 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(30, 45, 60));
+			case 'pico' | 'philly' | 'blammed': 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(111, 19, 60));
+			case 'satin-panties' | 'high' | 'milf':
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(203, 113, 170));
+			case 'cocoa' | 'eggnog' | 'winter-horrorland': 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(141, 165, 206));
+			case 'senpai' | 'roses' | 'thorns': 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.fromRGB(206, 106, 169));
+			case 'ugh' | 'guns' | 'stress': 
+				FlxTween.color(bg, 0.35, bg.color, FlxColor.GRAY);
+			default: 
+				//do nothing lol
 		}
 
-		
-		if (FlxG.sound.music.volume < 0.7)
-		{
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-		}
-		
-
-		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.4));
+		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.15));
 
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
 
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
+
+		scoreText.x = FlxG.width - scoreText.width - 6;
+
+		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
+		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
+		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
+		diffText.x -= diffText.width / 2;
 
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;
@@ -266,21 +393,33 @@ class FreeplayState extends MusicBeatState
 		if (controls.BACK)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
+			if (iRestarted)
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			FlxG.switchState(new MainMenuState());
 		}
 
-		if (accepted)
+		if (songs[curSelected].songName.toLowerCase() == "extra-songs")
+		{
+			canAccept = false;
+			if (FlxG.keys.justPressed.ENTER)
+				regenMenu();
+		}
+
+		if (FlxG.keys.justPressed.ENTER && songs[curSelected].songName.toLowerCase() != stupidShit)
 		{
 			var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 
-			trace(poop);
+			//trace(poop);
 
 			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 			PlayState.isStoryMode = false;
+			PlayState.isStoryMenu = false;
+			PlayState.isFreeplayMenu = true;
 			PlayState.storyDifficulty = curDifficulty;
 
 			PlayState.storyWeek = songs[curSelected].week;
-			trace('CUR WEEK' + PlayState.storyWeek);
+			//trace('CUR WEEK' + PlayState.storyWeek);
+			FlxG.sound.music.fadeOut();
 			LoadingState.loadAndSwitchState(new PlayState());
 		}
 	}
@@ -312,7 +451,7 @@ class FreeplayState extends MusicBeatState
 	function changeSelection(change:Int = 0)
 	{
 		#if !switch
-		NGio.logEvent('Fresh');
+		//NGio.logEvent('Fresh');
 		#end
 
 		FlxG.log.add(mainColor);
@@ -337,15 +476,11 @@ class FreeplayState extends MusicBeatState
 
 		mainColor = songs[curSelected].songColor;
 
-		#if PRELOAD_ALL
-		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
-		#end
-
 		var bullShit:Int = 0;
 
 		for (i in 0...iconArray.length)
 		{
-			iconArray[i].alpha = 0.6;
+			iconArray[i].alpha = 0.4;
 		}
 
 		iconArray[curSelected].alpha = 1;
