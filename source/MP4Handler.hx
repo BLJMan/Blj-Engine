@@ -64,6 +64,7 @@ class MP4Handler
 
 		netStream.play(path);
 		#else
+		FlxG.autoPause = true;
 		finishCallback = callback;
 
 		vlcBitmap = new VlcBitmap();
