@@ -1,5 +1,9 @@
 package;
 
+import flixel.util.FlxTimer;
+import flixel.addons.effects.FlxTrail;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import Controls.KeyboardScheme;
 import Controls.Control;
 import flash.text.TextField;
@@ -15,142 +19,82 @@ import lime.utils.Assets;
 
 class AboutSubState extends MusicBeatState
 {
-	var selector:FlxText;
-	var curSelected:Int = 0;
-
-	var controlsStrings:Array<String> = [];
-
-	private var grpControls:FlxTypedGroup<Alphabet>;
-	var versionShit:FlxText;
+	var text:Alphabet;
+	private var floatshit:Float = 0;
+	
 	override function create()
 	{
-
+		super.create();
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		controlsStrings = ["test1" + "\n" + "test2" + "\n" + "test3"];
-		
-		trace(controlsStrings);
-
-		menuBG.color = 0xFFea71fd;
+        menuBG.color = 0xFFea71fd;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.antialiasing = true;
+		menuBG.antialiasing = CoolThings.antialiasing;
 		add(menuBG);
 
-		grpControls = new FlxTypedGroup<Alphabet>();
-		add(grpControls);
+		var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image("cringe", "shared"));
+		logo.screenCenter(X);
+		logo.scale.set(0.5, 0.5);
+		logo.y += 150;
+		logo.antialiasing = CoolThings.antialiasing;
+		add(logo);
 
-		for (i in 0...controlsStrings.length)
+		var leText:FlxText = new FlxText(FlxG.width /2 + 150, FlxG.height / 2 + 100, 0, "<- me");
+		leText.setFormat("assets/fonts/Funkin-Bold.otf", 48, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		leText.antialiasing = CoolThings.antialiasing;
+		leText.alpha = 0;
+		add(leText);
+
+		text = new Alphabet(0, (70) + 50, "BLJ Engine by blj :)", false, false);
+		text.screenCenter(X);
+		text.alpha = 0;
+		add(text);
+
+		//var daTrail = new FlxTrail(text, null, 6, 24, 0.4, 0.055);
+
+		//add(daTrail);
+
+		text.y -= 100;
+
+		FlxTween.tween(text, {y: text.y + 100, alpha: 1}, 1, {ease: FlxEase.elasticOut, startDelay: 0.5 + (0.075)});
+		new FlxTimer().start(2, function(tmr:FlxTimer)
 		{
-				var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, controlsStrings[i], true, false);
-				controlLabel.isMenuItem = true;
-				controlLabel.targetY = i;
-                controlLabel.screenCenter(X);
-				grpControls.add(controlLabel);
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-		}
+			FlxTween.tween(leText, {alpha: 1}, 1 );
+		});
+		
+		Conductor.changeBPM(102);
 
-		super.create();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		floatshit += 0.03;
+		text.y += Math.sin(floatshit);
 
-			if (controls.BACK)
-				FlxG.switchState(new OtherOptionsSubState());
-			if (controls.UP_P)
-				changeSelection(-1);
-			if (controls.DOWN_P)
-				changeSelection(1);
+		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 0.95);
 
-			/*if (controls.ACCEPT)
-			{
-				if (curSelected != 3)
-					grpControls.remove(grpControls.members[curSelected]);
-				switch(curSelected)
-				{
-					case 0:
-						FlxG.save.data.ghost = !FlxG.save.data.ghost;
-						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.ghost ? 'New Input' : 'Old Input'), true, false);
-						ctrl.isMenuItem = true;
-						ctrl.targetY = curSelected;
-						grpControls.add(ctrl);
-                        trace(FlxG.save.data.ghost);
-                        /*if (FlxG.save.data.ghost)
-				    	{
-					    	FlxG.save.data.ghost = false;
-					    }else
-					    {
-					    	FlxG.save.data.ghost = true;
-					    }
-						
-					case 1:
-						FlxG.save.data.downscroll = !FlxG.save.data.downscroll;
-						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.downscroll ? "Downscroll" : "Upscroll"), true, false);
-						ctrl.isMenuItem = true;
-						ctrl.targetY = curSelected - 1;
-						grpControls.add(ctrl);
-                        trace(FlxG.save.data.downscroll);
-                        /*if (FlxG.save.data.downscroll)
-                        {
-                            FlxG.save.data.downscroll = false;
-                        }else
-                        {
-                            FlxG.save.data.downscroll = true;
-                        }
-					case 2:
-						FlxG.save.data.botplay = !FlxG.save.data.botplay;
-						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (FlxG.save.data.botplay ? 'Botplay on' : 'Botplay off'), true, false);
-						ctrl.isMenuItem = true;
-						ctrl.targetY = curSelected - 2;
-						grpControls.add(ctrl);
-                        trace(FlxG.save.data.botplay);
-                        /*if (FlxG.save.data.botplay)
-                        {
-                            FlxG.save.data.botplay = false;
-                        }else
-                        {
-                            FlxG.save.data.botplay = true;
-                        }
-				}
-			}*/
-	}
+		if (controls.BACK)
+        {
+            FlxG.switchState(new OtherOptionsSubState());
+        }
 
-	var isSettingControl:Bool = false;
-
-	function changeSelection(change:Int = 0)
-	{
-		#if !switch
-		// NGio.logEvent('Fresh');
-		#end
-		
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-
-		curSelected += change;
-
-		if (curSelected < 0)
-			curSelected = grpControls.length - 1;
-		if (curSelected >= grpControls.length)
-			curSelected = 0;
-
-		// selector.y = (70 * curSelected) + 30;
-
-		var bullShit:Int = 0;
-
-		for (item in grpControls.members)
+		if (controls.ACCEPT)
 		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.6;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
-				// item.setGraphicSize(Std.int(item.width));
-			}
+			FlxG.camera.zoom += 0.03;
 		}
+
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
+
+		//trace(FlxG.sound.music);
 	}
+
+	override function beatHit()
+	{
+		super.beatHit();
+		FlxG.camera.zoom += 0.03;
+	}
+
 }
