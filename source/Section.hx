@@ -1,11 +1,14 @@
 package;
 
+import SongEvent.SwagEvent;
+
 typedef SwagSection =
 {
 	var sectionNotes:Array<Dynamic>;
 	var lengthInSteps:Int;
 	var typeOfSection:Int;
 	var mustHitSection:Bool;
+	var gfSection:Bool;
 	var bpm:Int;
 	var changeBPM:Bool;
 	var altAnim:Bool;
@@ -14,10 +17,10 @@ typedef SwagSection =
 class Section
 {
 	public var sectionNotes:Array<Dynamic> = [];
-
 	public var lengthInSteps:Int = 16;
 	public var typeOfSection:Int = 0;
 	public var mustHitSection:Bool = true;
+	public var gfSection:Bool = false; //hi ShadowMario
 
 	/**
 	 *	Copies the first section into the second section!
