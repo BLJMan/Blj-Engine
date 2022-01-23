@@ -17,20 +17,50 @@ class CoolThings
     public static var doSplash:Bool;
     public static var persist:Bool;
     public static var offset:Int;
+    public static var framerate:Int;
 
     public static function reload()
     {
-        botplay = FlxG.save.data.botplay;
-        antialiasing = FlxG.save.data.antialiasing;
-        ghost = FlxG.save.data.ghost;
-        downscroll = FlxG.save.data.downscroll;
-        showMiss = FlxG.save.data.showMiss;
-        showtime = FlxG.save.data.showtime;
-        secretShh = FlxG.save.data.rick;
-        newSplash = FlxG.save.data.splashlol;
-        doSplash = FlxG.save.data.doSplash;
-        persist = FlxG.save.data.persist;
-        offset = FlxG.save.data.offset;
+        if (FlxG.save.data.botplay != null)
+            botplay = FlxG.save.data.botplay;
+
+        if (FlxG.save.data.antialiasing != null)
+            antialiasing = FlxG.save.data.antialiasing;
+
+        if (FlxG.save.data.ghost != null)
+            ghost = FlxG.save.data.ghost;
+
+        if (FlxG.save.data.downscroll != null)
+            downscroll = FlxG.save.data.downscroll;
+
+        if (FlxG.save.data.showMiss != null)
+            showMiss = FlxG.save.data.showMiss;
+
+        if (FlxG.save.data.showtime != null)
+            showtime = FlxG.save.data.showtime;
+
+        if (FlxG.save.data.rick != null)
+            secretShh = FlxG.save.data.rick;
+
+        if (FlxG.save.data.splashlol != null)
+            newSplash = FlxG.save.data.splashlol;
+
+        if (FlxG.save.data.doSplash != null)
+            doSplash = FlxG.save.data.doSplash;
+
+        if (FlxG.save.data.persist != null)
+            persist = FlxG.save.data.persist;
+
+        if (FlxG.save.data.offset != null)
+            offset = FlxG.save.data.offset;
+
+        if (FlxG.save.data.FPS != null && FlxG.save.data.FPS > 10 && FlxG.save.data.FPS < 910)
+        {
+            FlxG.updateFramerate = FlxG.save.data.FPS;
+            FlxG.drawFramerate = FlxG.save.data.FPS;
+
+            framerate = FlxG.save.data.FPS;
+        }
     }
 
     public static function save()
@@ -46,6 +76,7 @@ class CoolThings
         FlxG.save.data.doSplash = doSplash;
         FlxG.save.data.persist = persist;
         FlxG.save.data.offset = offset;
+        FlxG.save.data.FPS = framerate;
 
         FlxG.save.flush();
     }
