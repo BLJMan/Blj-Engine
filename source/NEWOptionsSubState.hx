@@ -1,5 +1,7 @@
 package;
 
+import flixel.FlxObject;
+import flixel.math.FlxPoint;
 import flixel.graphics.FlxGraphic;
 import lime.app.Application;
 import flixel.util.FlxSave;
@@ -33,6 +35,10 @@ class NEWOptionsSubState extends MusicBeatState
 
 	var shitText:FlxText;
 
+	var camFollow:FlxObject;
+
+	var camFollowThing:FlxObject;
+
 	override function create()
 	{
 
@@ -58,6 +64,7 @@ class NEWOptionsSubState extends MusicBeatState
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
+		menuBG.scrollFactor.set();
 		menuBG.antialiasing = CoolThings.antialiasing;
 		add(menuBG);
 
@@ -77,7 +84,7 @@ class NEWOptionsSubState extends MusicBeatState
 		add(offsetText);
 
 		#if desktop
-		fpsText = new FlxText(55, 695, 0, FlxG.save.data.FPS, 10);
+		fpsText = new FlxText(55, 695, 0, "FPS: " + CoolThings.framerate, 10);
 		fpsText.scrollFactor.set();
 		fpsText.scale.set(1.4, 1.4);
 		fpsText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -93,23 +100,37 @@ class NEWOptionsSubState extends MusicBeatState
 
 		for (i in 0...controlsStrings.length)
 		{
-				var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, controlsStrings[i], true, false);
-				controlLabel.isMenuItem = true;
-				controlLabel.targetY = i;
-                controlLabel.screenCenter(X);
-				grpControls.add(controlLabel);
+			var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, controlsStrings[i], true, false);
+			//var controlLabel = new MenuOptionItem((70 * i) - 50, i, controlsStrings, i);
+			controlLabel.isMenuItem = true;
+			controlLabel.targetY = i;
+            controlLabel.screenCenter(X);
+			var scr:Float = (controlsStrings.length - 6) * 0.12;
+			if(controlsStrings.length < 9) scr = 0;
+			controlLabel.scrollFactor.set(0, scr);
+			
+			grpControls.add(controlLabel);
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
 		}
+
+		camFollow = new FlxObject(0, 0, 1, 1);
+		camFollowThing = new FlxObject(0, 0, 1, 1);
+		add(camFollowThing);
+		add(camFollow);
 
 		var blackStuff:FlxSprite = new FlxSprite(0, 595).makeGraphic(FlxG.width, 40, FlxColor.BLACK);
 		blackStuff.alpha = 0.5;
 		blackStuff.screenCenter(X);
+		blackStuff.scrollFactor.set();
 		add(blackStuff);
 
 		shitText = new FlxText(0, 600, 0, "", 18);
 		shitText.setFormat("assets/fonts/vcr.ttf", 25, FlxColor.WHITE, RIGHT);
 		shitText.antialiasing = CoolThings.antialiasing;
+		shitText.scrollFactor.set();
 		add(shitText);
+
+		//FlxG.camera.follow(camFollowThing, null, 1);
 
 		super.create();
 	}
@@ -120,13 +141,15 @@ class NEWOptionsSubState extends MusicBeatState
 
 		shitText.screenCenter(X);
 
+		camFollowThing.setPosition(FlxMath.lerp(camFollowThing.x, camFollow.x, CoolUtil.boundTo(elapsed * 7.5, 0, 1)), FlxMath.lerp(camFollowThing.y, camFollow.y, CoolUtil.boundTo(elapsed * 7.5, 0, 1)));
+
 		FlxGraphic.defaultPersist = CoolThings.persist;
 
 		if (FlxG.keys.justPressed.Y)
 		{
-			FlxG.save.data.FPS = Application.current.window.displayMode.refreshRate;
-			FlxG.updateFramerate = FlxG.save.data.FPS;
-			FlxG.drawFramerate = FlxG.save.data.FPS;
+			CoolThings.framerate = Application.current.window.displayMode.refreshRate;
+			FlxG.updateFramerate = CoolThings.framerate;
+			FlxG.drawFramerate = CoolThings.framerate;
 
 		}
 		if (FlxG.keys.justPressed.U)
@@ -139,7 +162,7 @@ class NEWOptionsSubState extends MusicBeatState
 			FlxG.fullscreen = !FlxG.fullscreen;
 		}
 
-			fpsText.text = "(Left, Right) | FPS: " + FlxG.save.data.FPS;
+			fpsText.text = "(Left, Right) | FPS: " + CoolThings.framerate;
 
 			if (curSelected == 0)
 			{
@@ -192,7 +215,7 @@ class NEWOptionsSubState extends MusicBeatState
 			{
 				if (curSelected == 0)
 				{
-					FlxG.save.data.FPS -= 10;
+					CoolThings.framerate -= 10;
 					changedFPS();
 					
 				}else
@@ -209,7 +232,7 @@ class NEWOptionsSubState extends MusicBeatState
 			{
 				if (curSelected == 0)
 				{
-					FlxG.save.data.FPS += 10;
+					CoolThings.framerate += 10;
 					changedFPS();
 				}else 
 				{
@@ -234,7 +257,16 @@ class NEWOptionsSubState extends MusicBeatState
 					switch(curSelected)
 					{
 						case 0: 
-							//do nothing :)
+							for (item in grpControls.members)
+							{
+								item.alpha = 0;
+						
+								if (item.targetY == 0)
+								{
+									item.alpha = 1;
+									//item.setGraphicSize(Std.int(item.width));
+								}
+							}
 						case 1:
 							CoolThings.ghost = !CoolThings.ghost;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.ghost ? 'ghost tapping' : 'no ghost tapping'), true, false);
@@ -316,16 +348,18 @@ class NEWOptionsSubState extends MusicBeatState
 
 	function changedFPS()
 	{
-		if(FlxG.save.data.FPS > FlxG.drawFramerate)
+		if(CoolThings.framerate > FlxG.drawFramerate)
 		{
-			FlxG.updateFramerate = FlxG.save.data.FPS;
-			FlxG.drawFramerate = FlxG.save.data.FPS;
+			FlxG.updateFramerate = CoolThings.framerate;
+			FlxG.drawFramerate = CoolThings.framerate;
 		}
 		else
 		{
-			FlxG.drawFramerate = FlxG.save.data.FPS;
-			FlxG.updateFramerate = FlxG.save.data.FPS;
+			FlxG.drawFramerate = CoolThings.framerate;
+			FlxG.updateFramerate = CoolThings.framerate;
 		}
+
+		CoolThings.save();
 	}
 
 	function changeSelection(change:Int = 0)
@@ -346,6 +380,14 @@ class NEWOptionsSubState extends MusicBeatState
 		// selector.y = (70 * curSelected) + 30;
 
 		var bullShit:Int = 0;
+
+	/*	grpControls.forEach(function(spr:MenuOptionItem)
+		{
+			if (spr.id == curSelected)
+			{
+				camFollow.setPosition(0, spr.getGraphicMidpoint().y);
+			}
+		});*/
 
 		for (item in grpControls.members)
 		{
