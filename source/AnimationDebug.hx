@@ -33,7 +33,9 @@ class AnimationDebug extends FlxState
 
 	override function create()
 	{
-		FlxG.sound.music.stop();
+		#if !ANIMATION
+			FlxG.sound.music.stop();
+		#end
 
 		var gridBG:FlxSprite = FlxGridOverlay.create(10, 10);
 		gridBG.scrollFactor.set(0.5, 0.5);
@@ -69,6 +71,8 @@ class AnimationDebug extends FlxState
 		textAnim = new FlxText(300, 16);
 		textAnim.size = 26;
 		textAnim.scrollFactor.set();
+		textAnim.borderColor = FlxColor.BLACK;
+		textAnim.borderSize = 2;
 		add(textAnim);
 
 		genBoyOffsets();
@@ -91,6 +95,7 @@ class AnimationDebug extends FlxState
 			var text:FlxText = new FlxText(10, 20 + (18 * daLoop), 0, anim + ": " + offsets, 15);
 			text.scrollFactor.set();
 			text.color = FlxColor.BLUE;
+			text.antialiasing = CoolThings.antialiasing;
 			dumbTexts.add(text);
 
 			if (pushList)
@@ -112,6 +117,9 @@ class AnimationDebug extends FlxState
 	override function update(elapsed:Float)
 	{
 		textAnim.text = char.animation.curAnim.name;
+
+		if (FlxG.keys.justPressed.P)
+			char.flipX = !char.flipX;
 
 		if (FlxG.keys.justPressed.ESCAPE)
 			FlxG.switchState(new MainMenuState());
