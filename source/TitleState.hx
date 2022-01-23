@@ -72,27 +72,9 @@ class TitleState extends MusicBeatState
 
 		//FlxGraphic.defaultPersist = true;
 
-		
-		if (FlxG.save.data.FPS == null)
-		{
-			FlxG.save.data.FPS = 120;
-		}
-
-		FlxG.save.data.dasplash = "off";
-
 		#if html5
 			FlxG.save.data.antialiasing = true;
 		#end
-
-		if (FlxG.save.data.antialiasing == null)
-			FlxG.save.data.antialiasing = true;
-
-		if (FlxG.save.data.scrollSpeed == null)
-			FlxG.save.data.scrollSpeed = 1;
-
-		if (FlxG.save.data.showtime == null)
-			FlxG.save.data.showtime = true;
-
 
 		PlayerSettings.init();
 		
@@ -109,7 +91,7 @@ class TitleState extends MusicBeatState
 		trace('NEWGROUNDS LOL');
 		#end
 
-		FlxG.save.bind('funkin', 'ninjamuffin99');
+		FlxG.save.bind('funkin', 'bljengine');
 
 		Highscore.load();
 		CoolThings.reload();
@@ -132,6 +114,8 @@ class TitleState extends MusicBeatState
 		FlxG.switchState(new FreeplayState());
 		#elseif CHARTING
 		FlxG.switchState(new ChartingState());
+		#elseif ANIMATION
+		FlxG.switchState(new AnimationDebug("bf"));
 		#else
 		/*new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
@@ -163,10 +147,11 @@ class TitleState extends MusicBeatState
 			diamond.persist = true;
 			diamond.destroyOnNoUse = false;
 
-			FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
-				new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-			FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, 1),
-				{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+			FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.4, new FlxPoint(0, -1), 
+				{asset: diamond, width: 32, height: 32}, new FlxRect(-700, -500, FlxG.width * 2.1, FlxG.height * 2.1));
+
+			FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.4, new FlxPoint(0, 1),
+				{asset: diamond, width: 32, height: 32}, new FlxRect(-700, -500, FlxG.width * 2.1, FlxG.height * 2.1));
 
 			transIn = FlxTransitionableState.defaultTransIn;
 			transOut = FlxTransitionableState.defaultTransOut;
