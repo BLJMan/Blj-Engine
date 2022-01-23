@@ -547,9 +547,7 @@ class Character extends FlxSprite
 				tex = Paths.getSparrowAtlas('tankmanCaptain', 'shared', true);
 				frames = tex;
 				animation.addByPrefix('idle', "Tankman Idle Dance", 24, false);
-				animation.addByPrefix('oldSingUP', 'Tankman UP note ', 24, false);
 				animation.addByPrefix('singUP', 'Tankman UP note ', 24, false);
-				animation.addByPrefix('oldSingDOWN', 'Tankman DOWN note ', 24, false);
 				animation.addByPrefix('singDOWN', 'Tankman DOWN note ', 24, false);
 				animation.addByPrefix('singLEFT', 'Tankman Right Note ', 24, false);
 				animation.addByPrefix('singRIGHT', 'Tankman Note Left ', 24, false);
@@ -856,6 +854,38 @@ class Character extends FlxSprite
 
 				flipX = true;
 
+			case 'bfGfDEAD':
+				
+				frames = Paths.getSparrowAtlas('bfHoldingGF-DEAD', 'shared', true);
+				animation.addByPrefix('deathLoop', 'BF Dead with GF Loop0', 24, true);
+				animation.addByPrefix('firstDeath', 'BF Dies with GF0', 24, false);
+				animation.addByPrefix('deathConfirm', 'RETRY confirm holding gf0', 24, false);
+
+				loadOffset(curCharacter);
+
+				playAnim('idle');
+
+				flipX = true;
+
+			case "xgaster": 
+				frames = Paths.getSparrowAtlas('xgaster1', 'shared', true);
+				animation.addByPrefix("idle", "Xgaster idle dance0", 24);
+				animation.addByPrefix("singLEFT", "Xgaster Sing Note LEFT0", 24, false);
+				animation.addByPrefix("singUP", "Xgaster Sing Note UP0", 24, false);
+
+				playAnim("idle");
+
+			case "xgaster2": 
+				frames = Paths.getSparrowAtlas('xgaster2', 'shared', true);
+		
+				animation.addByPrefix("singRIGHT", "Xgaster Sing Note RIGHT0", 24, false);
+				animation.addByPrefix("singDOWN", "Xgaster Sing Note DOWN0", 24, false);
+
+				
+
+
+
+
 		}
 
 		dance();
@@ -914,7 +944,7 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+		if (!curCharacter.startsWith('bf') && curCharacter != "xgaster2")
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 			{
