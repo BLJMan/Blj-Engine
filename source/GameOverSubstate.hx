@@ -17,16 +17,22 @@ class GameOverSubstate extends MusicBeatSubstate
 	public function new(x:Float, y:Float)
 	{
 		var daStage = PlayState.curStage;
+		var daChar = PlayState.boyfriend.curCharacter;
 		var daBf:String = '';
 		switch (daStage)
 		{
 			case 'school':
 				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
 			case 'schoolEvil':
 				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
-			default:
+		}
+		switch (daChar)
+		{
+			case "bf-holding-gf":
+				daBf = "bfGfDEAD";
+			case "bf-pixel": 
+				daBf = "bf-pixel-dead";
+			default: 
 				daBf = 'bf';
 		}
 
@@ -70,7 +76,7 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxG.switchState(new FreeplayState());
 		}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
+		if (bf.animation.curAnim.name == 'deathLoop')
 		{
 			FlxG.camera.follow(camFollow, LOCKON, 0.01);
 		}
