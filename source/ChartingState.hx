@@ -1233,11 +1233,12 @@ class ChartingState extends MusicBeatState
 		{
 			if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
 			{
-				FlxG.log.add('FOUND EVIL NUMBER');
 				_song.notes[curSection].sectionNotes.remove(i);
+				//trace("DELETED SHITTY NOTE");
 			}
+			//trace(_song.notes[curSection].sectionNotes + "   " + note.strumTime + "   " + i[0]);
 		}
-
+		
 		updateGrid();
 	}
 
