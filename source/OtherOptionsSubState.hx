@@ -20,7 +20,7 @@ class OtherOptionsSubState extends MusicBeatState
 	var selector:FlxText;
 	var curSelected:Int = 0;
 
-	private var grpControls:FlxTypedGroup<Alphabet>;
+	private var grpControls:FlxTypedGroup<MenuOptionItem>;
 
 	var camFollow:FlxObject;
 
@@ -42,18 +42,19 @@ class OtherOptionsSubState extends MusicBeatState
 		menuBG.antialiasing = CoolThings.antialiasing;
 		add(menuBG);
 
-		grpControls = new FlxTypedGroup<Alphabet>();
+		grpControls = new FlxTypedGroup<MenuOptionItem>();
 		add(grpControls);
 
 		for (i in 0...menuItems.length)
 		{ 
-			var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
+			var controlLabel:MenuOptionItem = new MenuOptionItem(4 * i, i, menuItems, i);
 			controlLabel.screenCenter();
 			controlLabel.y = (100 * i) + 100;
 			//controlLabel.isMenuItem = true;
 			//controlLabel.targetY = i;
 			grpControls.add(controlLabel);
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
+			
 		}
 
 		changeSelection();
@@ -78,9 +79,9 @@ class OtherOptionsSubState extends MusicBeatState
 			
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 
-			var daSelected:String = menuItems[curSelected];
+			/*var daSelected:String = menuItems[curSelected];
 
-			new FlxTimer().start(0.6, function(_)
+			new FlxTimer().start(0.5, function(_)
 			{
 				switch (daSelected)
 				{
@@ -97,25 +98,15 @@ class OtherOptionsSubState extends MusicBeatState
 					case "exit":
 						FlxG.switchState(new MainMenuState());
 				}
-			});
-			
+			});*/
 
-			/*grpControls.forEach(function(shit:Alphabet) 
+			grpControls.forEach(function(shit:MenuOptionItem) 
 			{
-				if (curSelected != menuItems[curSelected])
-				{
-					FlxTween.tween(shit, {alpha: 0}, 0.4, {ease: FlxEase.quadOut,onComplete: function(twn:FlxTween)
-					{
-						shit.kill();
-					}});
-
-					trace(curSelected + " " + shit.);
-				}else
-				{
+				if (curSelected == shit.id)
+				{	
 					FlxFlicker.flicker(shit, 1, 0.06, false, false, function(flick:FlxFlicker)
 					{
 						var daSelected:String = menuItems[curSelected];
-
 						switch (daSelected)
 						{
 							case "preferences":
@@ -133,12 +124,13 @@ class OtherOptionsSubState extends MusicBeatState
 						}
 					});
 				}
-			});*/
+			});
 		}
 
 		if (canChange)
 		{
-			if (controls.BACK #if android || FlxG.android.justReleased.BACK #end) {
+			if (controls.BACK) 
+			{
 				FlxG.switchState(new MainMenuState());
 			}
 
@@ -182,7 +174,7 @@ class OtherOptionsSubState extends MusicBeatState
 	}
 
 	override function closeSubState()
-		{
-			super.closeSubState();
-		}	
+	{
+		super.closeSubState();
+	}	
 }
