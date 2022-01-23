@@ -51,7 +51,7 @@ class ColorsSubState extends MusicBeatSubstate
             }
 
             var daNote:FlxSprite = new FlxSprite(xPos -70, yPos);
-            daNote.frames = Paths.getSparrowAtlas('NOTE_assets', 'shared');
+            daNote.frames = Paths.getSparrowAtlas('UI/NOTE_assets', "shared");
             switch (i)
             {
                 case 0: 

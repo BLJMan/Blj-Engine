@@ -107,13 +107,16 @@ class StrumNote extends FlxSprite
 
 	override function update(elapsed:Float) 
 	{
-		if(resetAnim > 0) {
+		if(resetAnim > 0) 
+		{
 			resetAnim -= elapsed;
-			if(resetAnim <= 0) {
+			if(resetAnim <= 0) 
+			{
 				playAnim('static');
 				resetAnim = 0;
 			}
 		}
+
 
 		/*if (PlayState.curStage == 'school' || PlayState.curStage == 'schoolEvil')
 			isPixelStage = true;
