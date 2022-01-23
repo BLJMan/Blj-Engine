@@ -451,8 +451,7 @@ class ChartingPlayState extends MusicBeatState
 								}
 							});
 
-							if (daNote.noteType != 3)
-								noteMiss(daNote);
+							
 						}
 					}
 
@@ -654,7 +653,7 @@ class ChartingPlayState extends MusicBeatState
 	}
 
 	private function keyShit():Void // I've invested in emma stocks
-		{
+	{
 
 			// control arrays, order L D R U
 			var holdArray:Array<Bool> = [
@@ -671,9 +670,17 @@ class ChartingPlayState extends MusicBeatState
 				controls.RIGHT_P
 			];
 
+			var releaseArray:Array<Bool> = [
+				controls.LEFT_R,
+				controls.DOWN_R,
+				controls.UP_R,
+				controls.RIGHT_R
+			];
 	 
+			
+			
 			// HOLDS, check for sustain notes
-			if (holdArray.contains(true) && /*!boyfriend.stunned && */ generatedMusic)
+			if (holdArray.contains(true) &&  generatedMusic)
 			{
 				notes.forEachAlive(function(daNote:Note)
 				{
@@ -681,10 +688,12 @@ class ChartingPlayState extends MusicBeatState
 						goodNoteHit(daNote);
 				});
 			}
+
 	 
 			// PRESSES, check for note hits
-			if (pressArray.contains(true) &&  generatedMusic)
+			if (pressArray.contains(true)/* && !boyfriend.stunned*/ &&  generatedMusic)
 			{
+				
 	 
 				var possibleNotes:Array<Note> = []; // notes that can be hit
 				var directionList:Array<Int> = []; // directions that can be hit
@@ -739,18 +748,10 @@ class ChartingPlayState extends MusicBeatState
 						dontCheck = true;
 				}
 
+				
+
 				if (possibleNotes.length > 0 && !dontCheck)
 				{
-					if (!CoolThings.ghost)
-					{
-						for (shit in 0...pressArray.length)
-							{ // if a direction is hit that shouldn't be
-								if (pressArray[shit] && !directionList.contains(shit))
-								{
-									noteMiss(shit);
-								}
-							}
-					}
 					for (coolNote in possibleNotes)
 					{
 						if (pressArray[coolNote.noteData])
@@ -761,46 +762,56 @@ class ChartingPlayState extends MusicBeatState
 						}
 					}
 				}
-				else if (!CoolThings.ghost)
-				{
-					for (shit in 0...pressArray.length)
-						if (pressArray[shit])
-						{
-							noteMiss(shit);
-						}
-				}
 
 			}
 			
-			playerStrums.forEach(function(spr:StrumNote)
+			notes.forEachAlive(function(daNote:Note)
 			{
-				if (pressArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
+				if(CoolThings.downscroll && daNote.y > strumLine.y ||
+				!CoolThings.downscroll && daNote.y < strumLine.y)
 				{
-					spr.playAnim('pressed');
-					spr.resetAnim = 0;
+					// Force good note hit regardless if it's too late to hit it or not as a fail safe
+					if(CoolThings.botplay && daNote.canBeHit && daNote.mustPress ||
+					CoolThings.botplay && daNote.tooLate && daNote.mustPress)
+					{
+						if (daNote.noteType != 3)
+						{
+							goodNoteHit(daNote);
+							
+						}
+						
+					}
 				}
-				if (!holdArray[spr.ID])
-				{
-					spr.playAnim('static');
-					spr.resetAnim = 0;
-				}	 
-				if (spr.animation.curAnim.name == 'confirm' && !PlayState.curStage.startsWith('school'))
-				{
-					spr.centerOffsets();
-					spr.offset.x -= 13;
-					spr.offset.y -= 13;
-				}
-				else
-					spr.centerOffsets();
 			});
-		}
-	
-	function noteMiss(?daNote:Note, ?direction:Int):Void
-	{
-		combo = 0;
-		vocals.volume = 0;
-		FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+	 
+			if (!CoolThings.botplay)
+			{
+				playerStrums.forEach(function(spr:StrumNote)
+				{
+
+					if (pressArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
+					{
+						spr.playAnim('pressed');
+						//spr.resetAnim = 0;
+					}
+					if (!holdArray[spr.ID])
+					{
+						spr.playAnim('static');
+						//spr.resetAnim = 0;
+					}	 
+					if (spr.animation.curAnim.name == 'confirm' && !PlayState.isPixelArrows)
+					{
+						spr.centerOffsets();
+						spr.offset.x -= 13;
+						spr.offset.y -= 13;
+					}
+					else
+						spr.centerOffsets();
+				});
+			}
 	}
+
+	
 
 	function goodNoteHit(note:Note, resetMashViolation = true):Void
 	{
@@ -821,6 +832,22 @@ class ChartingPlayState extends MusicBeatState
 				combo += 1;
 			}
 
+			playerStrums.forEach(function(spr:StrumNote)
+			{
+				if (Math.abs(note.noteData) == spr.ID)
+				{
+					spr.playAnim('confirm', true);
+				}
+				if (spr.animation.curAnim.name == 'confirm' && !PlayState.isPixelArrows)
+				{
+					spr.centerOffsets();
+					spr.offset.x -= 13;
+					spr.offset.y -= 13;
+				}
+				else
+					spr.centerOffsets();
+			});
+	
 			note.wasGoodHit = true;
 			vocals.volume = 1;
 	
@@ -829,25 +856,8 @@ class ChartingPlayState extends MusicBeatState
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
-			}
-				
+			}		
 		}
-
-		playerStrums.forEach(function(spr:StrumNote)
-		{
-			if (Math.abs(note.noteData) == spr.ID)
-			{
-				spr.playAnim('confirm', true);
-			}
-			if (spr.animation.curAnim.name == 'confirm' && !PlayState.curStage.startsWith('school'))
-			{
-				spr.centerOffsets();
-				spr.offset.x -= 13;
-				spr.offset.y -= 13;
-			}
-			else
-				spr.centerOffsets();
-		});
 	}
 
 	function cpuNoteHit(note:Note):Void
@@ -868,8 +878,8 @@ class ChartingPlayState extends MusicBeatState
 				spr.centerOffsets();
 		});
 	
-		note.wasGoodHit = true;
-		vocals.volume = 1;
+		//note.wasGoodHit = true;
+		//vocals.volume = 1;
 	
 		if (!note.isSustainNote)
 		{
