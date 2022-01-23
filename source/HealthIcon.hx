@@ -51,6 +51,7 @@ class HealthIcon extends FlxSprite
 		animation.add("egg", [10, 11], 0, false, isPlayer);
 		animation.add("bfTT", [0, 1], 0, false, isPlayer);
 		animation.add("bb", [10, 11], 0, false, isPlayer);
+		animation.add("xgaster", [10, 11], 0, false, isPlayer);
 		animation.play(char);
 		scrollFactor.set();
 	}
