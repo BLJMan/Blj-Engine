@@ -61,6 +61,9 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
+
 		if (controls.ACCEPT)
 		{
 			endBullshit();
@@ -96,7 +99,14 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		super.beatHit();
 
+		bf.playAnim('deathLoop', true);
+
 		FlxG.log.add('beat');
+	}
+
+	override function stepHit()
+	{
+		super.stepHit();
 	}
 
 	var isEnding:Bool = false;
