@@ -14,6 +14,7 @@ class Boyfriend extends Character
 	public function new(x:Float, y:Float, ?char:String = 'bf')
 	{
 		super(x, y, char, true);
+		isBf = true;
 	}
 
 	override function update(elapsed:Float)
@@ -24,8 +25,12 @@ class Boyfriend extends Character
 			{
 				holdTimer += elapsed;
 			}
-			else
+			
+			if (holdTimer >= Conductor.stepCrochet * 4 * 0.001)
+			{
+				dance();
 				holdTimer = 0;
+			}
 
 			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
 			{

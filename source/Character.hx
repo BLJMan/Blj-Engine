@@ -16,6 +16,8 @@ class Character extends FlxSprite
 	public var curCharacter:String = 'bf';
 
 	public var canAutoAnim:Bool = true;
+
+	public var isBf:Bool = false;
 	
 	public var holdTimer:Float = 0;
 
@@ -307,7 +309,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
 
 				animation.addByPrefix('firstDeath', "BF dies", 24, false);
-				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
+				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, false);
 				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
 				animation.addByPrefix('scared', 'BF idle shaking', 24);
@@ -430,7 +432,7 @@ class Character extends FlxSprite
 				frames = Paths.getSparrowAtlas('bfPixelsDEAD','shared',true);
 				animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
 				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
-				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
+				animation.addByPrefix('deathLoop', "Retry Loop", 24, false);
 				animation.addByPrefix('deathConfirm', "RETRY CONFIRM", 24, false);
 				animation.play('firstDeath');
 
@@ -857,7 +859,7 @@ class Character extends FlxSprite
 			case 'bfGfDEAD':
 				
 				frames = Paths.getSparrowAtlas('bfHoldingGF-DEAD', 'shared', true);
-				animation.addByPrefix('deathLoop', 'BF Dead with GF Loop0', 24, true);
+				animation.addByPrefix('deathLoop', 'BF Dead with GF Loop0', 24, false);
 				animation.addByPrefix('firstDeath', 'BF Dies with GF0', 24, false);
 				animation.addByPrefix('deathConfirm', 'RETRY confirm holding gf0', 24, false);
 
@@ -880,11 +882,113 @@ class Character extends FlxSprite
 		
 				animation.addByPrefix("singRIGHT", "Xgaster Sing Note RIGHT0", 24, false);
 				animation.addByPrefix("singDOWN", "Xgaster Sing Note DOWN0", 24, false);
+			
+			case "edd": 
+				frames = Paths.getSparrowAtlas("edd", "shared", true);
 
+				animation.addByPrefix("idle", "EddIdle0", 24, false);
+				animation.addByPrefix("singUP", "EddUp0", 24, false);
+				animation.addByPrefix("singDOWN", "EddDown0", 24, false);
+				animation.addByPrefix("singLEFT", "EddLeft0", 24, false);
+				animation.addByPrefix("singRIGHT", "EddRight0", 24, false);
 				
+				animation.addByPrefix("HEY", "EddHEY!!0", 24, false);
+				animation.addByPrefix("turn", "EddTurnAround0", 24, false);
 
+				loadOffset(curCharacter);
 
+				playAnim("idle");
 
+			case "edd-alt": 
+				frames = Paths.getSparrowAtlas("edd", "shared", true);
+
+				flipX = true;
+				
+				animation.addByPrefix("idle", "EddSideIdle0", 24, false);
+				animation.addByPrefix("singUP", "EddSideUp0", 24, false);
+				animation.addByPrefix("singDOWN", "EddSideDown0", 24, false);
+				animation.addByPrefix("singLEFT", "EddSideLeft0", 24, false);
+				animation.addByPrefix("singRIGHT", "EddSideRight0", 24, false);
+
+				loadOffset(curCharacter);
+
+				playAnim("idle");
+
+			case "eduardo": 
+				frames = Paths.getSparrowAtlas("eduardo", "shared", true);
+
+				animation.addByPrefix("idle", "EduardoIdle0", 24, false);
+				animation.addByPrefix("singUP", "EduardoUp0", 24, false);
+				animation.addByPrefix("singDOWN", "EduardoDown0", 24, false);
+				animation.addByPrefix("singLEFT", "EduardoLeft0", 24, false);
+				animation.addByPrefix("singRIGHT", "EduardoRight0", 24, false);
+				
+				animation.addByPrefix("well", "EduardoWell0", 24, false);
+
+				loadOffset(curCharacter);
+
+				playAnim("idle");
+
+			case 'exe':
+				tex = Paths.getSparrowAtlas('Exe_Assets', "shared", true);
+				frames = tex;
+				animation.addByPrefix('idle', 'Exe Idle', 24, false);
+				animation.addByPrefix('singUP', 'Exe Up', 24);
+				animation.addByPrefix('singRIGHT', 'Exe Right', 24);
+				animation.addByPrefix('singDOWN', 'Exe Down', 24);
+				animation.addByPrefix('singLEFT', 'Exe left', 24);
+
+				loadOffset(curCharacter);
+
+				playAnim("idle");
+
+			case 'hypno_MX':
+				tex = Paths.getSparrowAtlas('hypno_MX', "shared", true);
+				frames = tex;
+				animation.addByPrefix('idle', 'MXIdle0', 24, false);
+				animation.addByPrefix('singUP', 'MXUp0', 24);
+				animation.addByPrefix('singRIGHT', 'MXRight0', 24);
+				animation.addByPrefix('singDOWN', 'MXDown0', 24);
+				animation.addByPrefix('singLEFT', 'MXLeft0', 24);
+
+				animation.addByPrefix('idk', 'MXHit1', 24);
+				animation.addByPrefix('idk2', 'MXHit2', 24, false);
+
+				loadOffset(curCharacter);
+
+				setGraphicSize(Std.int(width / 1.3));
+
+				playAnim("idle");
+			
+			case 'lord-x':
+				tex = Paths.getSparrowAtlas('GAMBLE_X', "shared", true);
+				frames = tex;
+				animation.addByPrefix('idle', 'X IDLE0', 24, false);
+				animation.addByPrefix('singUP', 'X UP0', 24);
+				animation.addByPrefix('singRIGHT', 'X LEFT0', 24);
+				animation.addByPrefix('singDOWN', 'X DOWN0', 24);
+				animation.addByPrefix('singLEFT', 'X RIGHT0', 24);
+
+				flipX = true;
+
+				loadOffset(curCharacter);
+
+				playAnim("idle");
+
+			case 'hypno':
+				tex = Paths.getSparrowAtlas('Hypno_Shit', "shared", true);
+				frames = tex;
+				animation.addByPrefix('idle', 'Hypno2 Idle0', 24);
+				animation.addByPrefix('singUP', 'Hypno Up Finished0', 24);
+				animation.addByPrefix('singRIGHT', 'Hypno Right Finished0', 24);
+				animation.addByPrefix('singDOWN', 'Hypno Down0', 24);
+				animation.addByPrefix('singLEFT', 'Hypno Left final0', 24);
+
+				flipX = true;
+
+				loadOffset(curCharacter);
+
+				playAnim("idle");
 
 		}
 
@@ -944,7 +1048,7 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf') && curCharacter != "xgaster2")
+		if (!isBf && curCharacter != "xgaster2")
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 			{
