@@ -185,7 +185,12 @@ class MainMenuState extends MusicBeatState
 		menuItem.antialiasing = CoolThings.antialiasing;
 		menuItem.alpha = 0;
 		menuItem.y = (menuItem.y - 100);
-		FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 0.7, {ease: FlxEase.circInOut, startDelay: (0.075 * i)});
+		FlxTween.tween(menuItem, {y: menuItem.y + 100, alpha: 1}, 0.7, {ease: FlxEase.circInOut, startDelay: (0.075 * i), onComplete: yuh});
+	}
+
+	function yuh(tween:FlxTween)
+	{
+		changeItem();
 	}
 
 	var selectedSomethin:Bool = false;
@@ -349,9 +354,6 @@ class MainMenuState extends MusicBeatState
 					spr.offset.set(0, 25);
 				
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
-				
-			}else 
-			{
 				
 			}
 
