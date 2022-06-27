@@ -186,31 +186,14 @@ class PauseSubState extends MusicBeatSubstate
 					menuItems = difficultyChoices;
 					regenMenu();
 				case "Practice mode":
-					if (FlxG.save.data.practice)
-					{
-						FlxG.save.data.practice = false;
-					}else
-					{
-						FlxG.save.data.practice = true;
-					}
+					FlxG.save.data.practice = !FlxG.save.data.practice;
 					trace("practice : " + FlxG.save.data.practice);
 				case "Botplay": 
-					if (CoolThings.botplay)
-					{
-						CoolThings.botplay = false;
-					}else
-					{
-						CoolThings.botplay = true;
-					}
+					CoolThings.botplay = !CoolThings.botplay;
+					FlxG.save.data.botplay = !FlxG.save.data.botplay;
 					trace("botplay : " + CoolThings.botplay);
 				case "Downscroll": 
-					if (CoolThings.downscroll)
-					{
-						CoolThings.downscroll = false;
-					}else
-					{
-						CoolThings.downscroll = true;
-					}
+					CoolThings.downscroll = !CoolThings.downscroll;
 					trace("downscroll : " + CoolThings.downscroll);
 				case "Restart Song":
 					FlxG.resetState();
