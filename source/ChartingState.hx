@@ -64,6 +64,8 @@ class ChartingState extends MusicBeatState
 	var curRenderedNotes:FlxTypedGroup<Note>;
 	var curRenderedSustains:FlxTypedGroup<FlxSprite>;
 	var curRenderedEvents:FlxTypedGroup<FlxSprite>;
+	var curRenderedEventsDesc:FlxTypedGroup<FlxText>;
+
 
 	var eventShitArray:Array<String> = [];
 
@@ -142,6 +144,8 @@ class ChartingState extends MusicBeatState
 		curRenderedNotes = new FlxTypedGroup<Note>();
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
 		curRenderedEvents = new FlxTypedGroup<FlxSprite>();
+		curRenderedEventsDesc = new FlxTypedGroup<FlxText>();
+
 
 		if (PlayState.SONG != null)
 		{
@@ -229,17 +233,19 @@ class ChartingState extends MusicBeatState
 		add(rateButton1);
 		add(rateButton2);
 
-		var check_strum_scroll = new FlxUICheckBox(800, 500, null, null, "Change scrolling type", 100);
+		var check_strum_scroll = new FlxUICheckBox(1005, 220, null, null, "Change scrolling type", 100);
 		check_strum_scroll.checked = CoolThings.diffScrollType;
 		check_strum_scroll.scrollFactor.set();
 		check_strum_scroll.callback = function()
 		{
-			if (CoolThings.diffScrollType)
-				CoolThings.diffScrollType = false;
-			else if (!CoolThings.diffScrollType)
-				CoolThings.diffScrollType = true;
+			CoolThings.diffScrollType = !CoolThings.diffScrollType;
 			FlxG.resetState();
 		};
+
+		var daText = new FlxText(1005, 270, 0, "click on a tab to view\na brief description\n\n\npress ESC to test the chart\n\n", 10);
+		daText.antialiasing = true;
+		daText.scrollFactor.set();
+		add(daText);
 		add(check_strum_scroll);
 
 		addSongUI();
@@ -250,6 +256,7 @@ class ChartingState extends MusicBeatState
 		add(curRenderedNotes);
 		add(curRenderedSustains);
 		add(curRenderedEvents);
+		add(curRenderedEventsDesc);
 
 		loadEvents();
 
@@ -268,6 +275,13 @@ class ChartingState extends MusicBeatState
 			point.set(x, y);
 		}
 	}
+
+	var player1DropDown:FlxUIDropDownMenuCustom;
+	var player2DropDown:FlxUIDropDownMenuCustom;
+	var gfDropDown:FlxUIDropDownMenuCustom;
+	var arrowDropDown:FlxUIDropDownMenuCustom;
+
+	var clearAllButton:FlxButton;
 
 	function addSongUI():Void
 	{
@@ -316,33 +330,42 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 
+		var speedTxt = new FlxText(70, 81, 0, "speed");
+
 		var stepperBPM:FlxUINumericStepper = new FlxUINumericStepper(10, 65, 1, 1, 1, 339, 0);
 		stepperBPM.value = Conductor.bpm;
 		stepperBPM.name = 'song_bpm';
+
+		var bpmBoxTxt = new FlxText(70, 66, 0, "BPM");
 
 		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 		var gfVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
 		var arrowVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('arrowsVersionList'));
 
-		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		player1DropDown = new FlxUIDropDownMenuCustom(10, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player1 = characters[Std.parseInt(character)];
 		});
 		player1DropDown.selectedLabel = _song.player1;
 
-		var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		player2DropDown = new FlxUIDropDownMenuCustom(140, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player2 = characters[Std.parseInt(character)];
 		});
 
-		var gfDropDown = new FlxUIDropDownMenu(150, 150, FlxUIDropDownMenu.makeStrIdLabelArray(gfVersions, true), function(gfVersion:String)
+		gfDropDown = new FlxUIDropDownMenuCustom(150, 150, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
-			_song.gf = gfVersions[Std.parseInt(gfVersion)];
+			_song.gf = characters[Std.parseInt(character)];
 		});
 
-		var arrowDropDown = new FlxUIDropDownMenu(150, 200, FlxUIDropDownMenu.makeStrIdLabelArray(arrowVersions, true), function(arrowVerion:String)
+		arrowDropDown = new FlxUIDropDownMenuCustom(150, 200, FlxUIDropDownMenuCustom.makeStrIdLabelArray(arrowVersions, true), function(arrowVerion:String)
 		{
 			_song.arrows = arrowVersions[Std.parseInt(arrowVerion)];
+		});
+
+		clearAllButton = new FlxButton(10, 150, "Clear ALL", function()
+		{
+			clearSong();
 		});
 
 		player2DropDown.selectedLabel = _song.player2;
@@ -353,6 +376,11 @@ class ChartingState extends MusicBeatState
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
 
+		var daText = new FlxText(5, 260, 0, "dropDown to the left is bf \ndropDown to the right is the opponent \nthe other one is girlfriend \n\nthe last one is the note skin\n\n", 10);
+		daText.antialiasing = true;
+
+		tab_group_song.add(clearAllButton);
+		tab_group_song.add(daText);
 		tab_group_song.add(check_voices);
 		tab_group_song.add(check_mute_inst);
 		tab_group_song.add(saveButton);
@@ -362,9 +390,11 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
 		tab_group_song.add(player1DropDown);
+		tab_group_song.add(arrowDropDown);
 		tab_group_song.add(gfDropDown);
 		tab_group_song.add(player2DropDown);
-		tab_group_song.add(arrowDropDown);
+		tab_group_song.add(speedTxt);
+		tab_group_song.add(bpmBoxTxt);
 
 		UI_box.addGroup(tab_group_song);
 		UI_box.scrollFactor.set();
@@ -428,6 +458,7 @@ class ChartingState extends MusicBeatState
 
 		check_changeBPM = new FlxUICheckBox(10, 60, null, null, 'Change BPM', 100);
 		check_changeBPM.name = 'check_changeBPM';
+		
 
 		tab_group_section.add(stepperLength);
 		tab_group_section.add(stepperSectionBPM);
@@ -456,17 +487,26 @@ class ChartingState extends MusicBeatState
 
 		var applyLength:FlxButton = new FlxButton(100, 10, 'Apply');
 
+		var daText = new FlxText(5, 260, 0, "IMPORTANT!\nhold 1 while placing a note to place a gfNote (gf sings)\nhold Z while placing a note to place a static note (must press)\nhold X while placing a note to place a hurt note (must not press)\n\n", 10);
+		daText.antialiasing = true;
+
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(applyLength);
+		tab_group_note.add(daText);
 
 		UI_box.addGroup(tab_group_note);
 	}
 
 	var eventVal1:FlxInputText;
 	var eventVal2:FlxInputText;
-	var eventType:FlxUIDropDownMenu;
+	var eventType:FlxUIDropDownMenuCustom;
 
 	var daEvent:String;
+
+	var addEventButton:FlxButton;
+	var loadEventsButton:FlxButton;
+	var clearEventsButton:FlxButton;
+	var clearEventsALLButton:FlxButton;
 
 	function addEventUI():Void
 	{
@@ -481,41 +521,58 @@ class ChartingState extends MusicBeatState
 		
 		eventVal1 = new FlxInputText(10, 70, 100);
 		eventVal2 = new FlxInputText(10, 110, 100);
-		eventType = new FlxUIDropDownMenu(9, 30, FlxUIDropDownMenu.makeStrIdLabelArray(events, true), function(event:String)
+		eventType = new FlxUIDropDownMenuCustom(9, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray(events, true), function(event:String)
 		{
 			daEvent = events[Std.parseInt(event)];
 		});
 
-		var addButton = new FlxButton(10, 150, "add event", function()
+		addEventButton = new FlxButton(10, 150, "add event", function()
 		{
 			addEvent();
 		});
 
-		var loadButton = new FlxButton(10, 200, "load events", function()
+		loadEventsButton = new FlxButton(10, 200, "load events", function()
 		{
 			loadAutosave();
 		});
 
-		var clearButton = new FlxButton(110, 150, "clear section", function()
+		clearEventsButton = new FlxButton(110, 150, "clear section", function()
 		{
 			clearSectionEvents();
 		});
 
-		var clearALLButton = new FlxButton(110, 200, "clear ALL", function()
+		clearEventsALLButton = new FlxButton(110, 200, "clear ALL EVENTS", function()
 		{
 			clearEvents();
 		});
 
 
-		tab_group_event.add(addButton);
-		tab_group_event.add(loadButton);
-		tab_group_event.add(clearButton);
-		tab_group_event.add(clearALLButton);
+		tab_group_event.add(addEventButton);
+		tab_group_event.add(loadEventsButton);
+		tab_group_event.add(clearEventsButton);
+		tab_group_event.add(clearEventsALLButton);
+
+		var daText = new FlxText(5, 260, 0, "ok hear me out \nselect an event from the dropDown\ninsert the values from the list below \nclick add event. \nthis autosaves the chart, so if for some reason \nthe events don't load when opening the editor \ntry clicking 'load events'.\n\n\n
+		BPMChange-> val1: new BPM\n
+		speedChange-> val1: new speed\n
+		characterChange-> val1: player(dad, bf, gf), val2: switch to (new Char. name - ex. 'senpai-angry')\n
+		playAnim-> val1: player (1=dad, 2=bf, 3=gf), val2: animName\n
+		addZoom-> val1: camGame zoom, val2: camHUD zoom\n
+		switchPos is broken and obsolete\n
+		setDefCamZoom-> val1: new default cam zoom\n
+		shakeCam-> val1: camera (1=game, 2=HUD), val2: INTENSITY,DURATION !make sure to put the comma and no spaces!\n
+		hideHUD-> val1: 0=hide strums, 1=hide health, 2=all, val2: ALPHA,DURATION !same thing as above!\n
+		camFocus-> val1: on which character(0=dad, 1=bf, 2=gf, 3=normal), val2: addX,addY (add to char. position)\n
+		if you use camFocus, you'll have to use it again with val1 = 3 to unfreeze the camera!\n\n
+		if you don't see something on this list then it requires no extra values\n\n", 9);
+
+		daText.antialiasing = true;
 		
 		var txt = new FlxText(150, eventType.y, 0, "event type");
 		var txt2 = new FlxText(130, eventVal1.y, 0, "value 1");
 		var txt3 = new FlxText(130, eventVal2.y, 0, "value 2");
 
+		tab_group_event.add(daText);
 		tab_group_event.add(txt);
 		tab_group_event.add(txt2);
 		tab_group_event.add(txt3);
@@ -663,28 +720,55 @@ class ChartingState extends MusicBeatState
 		return daPos;
 	}
 
+	function buttons(bruh:Bool)
+	{
+		clearAllButton.active = bruh;
+		addEventButton.active = bruh;
+		loadEventsButton.active = bruh;
+		clearEventsButton.active = bruh;
+		clearEventsALLButton.active = bruh;
+	}
+
 	override function update(elapsed:Float)
 	{
-		if (FlxG.keys.justPressed.L)
-			trace(_song);
+		if (FlxG.keys.justPressed.UP)
+			addAutoNote(2);
 
-		if (!typingShit.hasFocus && !eventVal1.hasFocus && !eventVal2.hasFocus)
+		if (FlxG.keys.justPressed.LEFT)
+			addAutoNote(0);
+
+		if (FlxG.keys.justPressed.DOWN)
+			addAutoNote(1);
+
+		if (FlxG.keys.justPressed.RIGHT)
+			addAutoNote(3);
+		/*if (FlxG.keys.justPressed.L)
+			trace(_song);*/
+
+		if (!typingShit.hasFocus && !eventVal1.hasFocus && !eventVal2.hasFocus && !eventType.dropPanel.visible 
+			&& !player1DropDown.dropPanel.visible && !player2DropDown.dropPanel.visible && !gfDropDown.dropPanel.visible 
+			&& !arrowDropDown.dropPanel.visible) //i am so sorry
 		{
 			isTyping = false;
+			buttons(true);
 		}else 
 		{
 			isTyping = true;
+			buttons(false);
 		}
+
+		#if debug
 
 		if (FlxG.keys.justPressed.U)
 			trace(_song.events, PlayState.SONG.events);
-		if (FlxG.keys.justPressed.Y && !isTyping)
-			addEvent();
+		/*if (FlxG.keys.justPressed.Y && !isTyping)
+			addEvent();*/
 		
 		FlxG.watch.addQuick("s", diffScrollType);
 		FlxG.watch.addQuick("sd", FlxG.save.data.eventautosave);
 		FlxG.watch.addQuick("aws", _song.events);
-
+		#end
+		
 		if (!FlxG.mouse.overlaps(gridBG))
 			dummyArrow.visible = false;
 		else 
@@ -867,12 +951,15 @@ class ChartingState extends MusicBeatState
 
 			if (FlxG.mouse.wheel != 0)
 			{
-				FlxG.sound.music.pause();
-				vocals.pause();
-				claps.splice(0, claps.length);
+				if (!isTyping)
+				{
+					FlxG.sound.music.pause();
+					vocals.pause();
+					claps.splice(0, claps.length);
 
-				FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4);
-				vocals.time = FlxG.sound.music.time;
+					FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4);
+					vocals.time = FlxG.sound.music.time;
+				}
 			}
 
 			if (!FlxG.keys.pressed.SHIFT && !isTyping)
@@ -926,9 +1013,9 @@ class ChartingState extends MusicBeatState
 		var shiftThing:Int = 1;
 		if (FlxG.keys.pressed.SHIFT)
 			shiftThing = 4;
-		if (FlxG.keys.justPressed.RIGHT || FlxG.keys.justPressed.D && !isTyping)
+		if (FlxG.keys.justPressed.D && !isTyping)
 			changeSection(curSection + shiftThing);
-		if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.A && !isTyping)
+		if (FlxG.keys.justPressed.A && !isTyping)
 			changeSection(curSection - shiftThing);
 
 		bpmTxt.text = bpmTxt.text = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2))
@@ -1117,21 +1204,27 @@ class ChartingState extends MusicBeatState
 			while (curRenderedEvents.members.length > 0)
 			{
 				curRenderedEvents.remove(curRenderedEvents.members[0], true);
+				curRenderedEventsDesc.remove(curRenderedEventsDesc.members[0], true);
 			}
 
 		if (_song.events != null)
-		for (event in _song.events)
-		{
-			var data = event.visPos.split(",");
-			if (Std.parseInt(data[1]) == curSection)
+			for (event in _song.events)
 			{
-				var blackShit:FlxSprite = new FlxSprite(gridBG.x + 5, getYfromStrum(Std.parseFloat(data[0]) - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps) - 15).loadGraphic(Paths.image("event"));
-				blackShit.antialiasing = true;
-				//blackShit.scale.set(0.8, 0.8);
-				curRenderedEvents.add(blackShit);
-				trace("added event" + Std.parseInt(data[1]), curSection, Std.parseFloat(data[0]), blackShit.y);
-			}
-		} 
+				var data = event.visPos.split(",");
+				if (Std.parseInt(data[1]) == curSection)
+				{
+					var blackShit:FlxSprite = new FlxSprite(gridBG.x + 4, getYfromStrum(Std.parseFloat(data[0]) - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps) - 14).loadGraphic(Paths.image("event"));
+					blackShit.antialiasing = true;
+					blackShit.scale.set(1.2, 1.2);
+					var eventTxt = new FlxText(blackShit.x - 150, blackShit.y, 0, "");
+					eventTxt.text = "event: " + event.type + "\nval1: " + event.value1 + "\nval2: " + event.value2;
+					curRenderedEventsDesc.add(eventTxt);
+					curRenderedEvents.add(blackShit);
+					//wait this sounds racist
+					//fuck
+					trace("added event" + Std.parseInt(data[1]), curSection, Std.parseFloat(data[0]), blackShit.y);
+				}
+			} 
 
 		var sectionInfo:Array<Dynamic> = _song.notes[curSection].sectionNotes;
 
@@ -1284,8 +1377,6 @@ class ChartingState extends MusicBeatState
 
 	private function addEvent() 
 	{
-		//var blackShit:FlxSprite = new FlxSprite(gridBG.x, strumLine.y).makeGraphic(GRID_SIZE, 10, FlxColor.BLACK);
-		//curRenderedEvents.add(blackShit);
 		var val1 = Std.parseFloat(eventVal1.text);
 		var val2 = eventVal2.text;
 		var type = daEvent;
@@ -1332,6 +1423,28 @@ class ChartingState extends MusicBeatState
 
 		autosaveSong();
 	}
+
+	private function addAutoNote(data:Int):Void
+		{
+			var noteStrum = Conductor.songPosition;
+			var noteData = data;
+			var noteSus = 0;
+			var noteType = 0;
+	
+			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, noteType]);
+	
+			curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
+	
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, noteType]);
+			}
+	
+			updateGrid();
+			updateNoteUI();
+	
+			autosaveSong();
+		}
 
 	function getStrumTime(yPos:Float):Float
 	{
