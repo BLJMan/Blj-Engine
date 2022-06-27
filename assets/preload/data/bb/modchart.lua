@@ -1,5 +1,5 @@
 function start (song)
-    hideUpperHUD = true
+    hideTimeAndRating = true
 end
 
 function beatHit (beat)
