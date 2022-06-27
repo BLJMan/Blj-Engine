@@ -49,7 +49,8 @@ class MusicBeatState extends FlxUIState
 
 	private function updateCurStep():Void
 	{
-		var lastChange:BPMChangeEvent = {
+		var lastChange:BPMChangeEvent = 
+		{
 			stepTime: 0,
 			songTime: 0,
 			bpm: 0
