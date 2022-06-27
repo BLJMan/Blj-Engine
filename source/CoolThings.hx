@@ -10,6 +10,7 @@ class CoolThings
     public static var antialiasing:Bool;
     public static var ghost:Bool;
     public static var downscroll:Bool;
+    public static var middlescroll:Bool;
     public static var showMiss:Bool;
     public static var showtime:Bool;
     public static var secretShh:Bool;
@@ -18,6 +19,8 @@ class CoolThings
     public static var persist:Bool;
     public static var offset:Int;
     public static var framerate:Int;
+    public static var displaceCam:Bool;
+    public static var cpuStrums:Bool;
 
     public static function reload()
     {
@@ -32,6 +35,9 @@ class CoolThings
 
         if (FlxG.save.data.downscroll != null)
             downscroll = FlxG.save.data.downscroll;
+
+        if (FlxG.save.data.middlescroll != null)
+            middlescroll = FlxG.save.data.middlescroll;
 
         if (FlxG.save.data.showMiss != null)
             showMiss = FlxG.save.data.showMiss;
@@ -54,12 +60,71 @@ class CoolThings
         if (FlxG.save.data.offset != null)
             offset = FlxG.save.data.offset;
 
-        if (FlxG.save.data.FPS != null && FlxG.save.data.FPS > 10 && FlxG.save.data.FPS < 910)
-        {
-            FlxG.updateFramerate = FlxG.save.data.FPS;
-            FlxG.drawFramerate = FlxG.save.data.FPS;
+        if (FlxG.save.data.displace != null)
+            displaceCam = FlxG.save.data.displace;
 
-            framerate = FlxG.save.data.FPS;
+        if (FlxG.save.data.cpu != null)
+            cpuStrums = FlxG.save.data.cpu;
+
+        #if !html5
+            if (FlxG.save.data.FPS != null && FlxG.save.data.FPS > 10 && FlxG.save.data.FPS < 910)
+            {
+                FlxG.updateFramerate = FlxG.save.data.FPS;
+                FlxG.drawFramerate = FlxG.save.data.FPS;
+
+                framerate = FlxG.save.data.FPS;
+            }
+        #end
+    }
+
+    public static function initialize()
+    {
+        if (FlxG.save.data.botplay == null)
+            FlxG.save.data.botplay = false;
+
+        if (FlxG.save.data.antialiasing == null)
+            FlxG.save.data.antialiasing = true;
+
+        if (FlxG.save.data.ghost == null)
+            FlxG.save.data.ghost = true;
+
+        if (FlxG.save.data.downscroll == null)
+            FlxG.save.data.downscroll = false;
+
+        if (FlxG.save.data.middlescroll == null)
+            FlxG.save.data.middlescroll = false;
+
+        if (FlxG.save.data.showMiss == null)
+            FlxG.save.data.showMiss = true;
+
+        if (FlxG.save.data.showtime == null)
+            FlxG.save.data.showtime = true;
+
+        if (FlxG.save.data.rick == null)
+            FlxG.save.data.rick = false;
+
+        if (FlxG.save.data.splashlol == null)
+            FlxG.save.data.splashlol = false;
+
+        if (FlxG.save.data.doSplash == null)
+            FlxG.save.data.doSplash = true;
+
+        if (FlxG.save.data.persist == null)
+            FlxG.save.data.persist = false;
+
+        if (FlxG.save.data.offset == null)
+            FlxG.save.data.offset = 0;
+
+        if (FlxG.save.data.displace == null)
+            FlxG.save.data.displace = false;
+
+        if (FlxG.save.data.cpu == null)
+            FlxG.save.data.cpu = true;
+
+        
+        if (FlxG.save.data.FPS == null)
+        {
+            FlxG.save.data.FPS = 120;
         }
     }
 
@@ -69,6 +134,7 @@ class CoolThings
         FlxG.save.data.antialiasing = antialiasing;
         FlxG.save.data.ghost = ghost;
         FlxG.save.data.downscroll = downscroll;
+        FlxG.save.data.middlescroll = middlescroll;
         FlxG.save.data.showMiss = showMiss;
         FlxG.save.data.showtime = showtime;
         FlxG.save.data.rick = secretShh;
@@ -77,6 +143,8 @@ class CoolThings
         FlxG.save.data.persist = persist;
         FlxG.save.data.offset = offset;
         FlxG.save.data.FPS = framerate;
+        FlxG.save.data.displace = displaceCam;
+        FlxG.save.data.cpu = cpuStrums;
 
         FlxG.save.flush();
     }
