@@ -1,6 +1,5 @@
 package;
 
-//import NEWOptionsSubState.NEWOptionsSupState;
 import flixel.FlxCamera;
 #if desktop
 import Discord.DiscordClient;
@@ -52,29 +51,9 @@ class TitleState extends MusicBeatState
 		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
 		#end
 
-		#if !html5
-		if(FlxG.save.data.FPS > FlxG.drawFramerate)
-		{
-			FlxG.updateFramerate = FlxG.save.data.FPS;
-			FlxG.drawFramerate = FlxG.save.data.FPS;
-		}
-		else
-		{
-			FlxG.drawFramerate = FlxG.save.data.FPS;
-			FlxG.updateFramerate = FlxG.save.data.FPS;
-		}
-		#else 
-		FlxG.updateFramerate = 60;
-		FlxG.drawFramerate = 60;
-		#end
-
 		//FlxG.autoPause = false;
 
 		//FlxGraphic.defaultPersist = true;
-
-		#if html5
-			FlxG.save.data.antialiasing = true;
-		#end
 
 		PlayerSettings.init();
 		
@@ -94,6 +73,7 @@ class TitleState extends MusicBeatState
 		FlxG.save.bind('funkin', 'bljengine');
 
 		Highscore.load();
+		CoolThings.initialize();
 		CoolThings.reload();
 
 		if (FlxG.save.data.weekUnlocked != null)
@@ -423,7 +403,6 @@ class TitleState extends MusicBeatState
 	{
 		super.beatHit();
 
-		//logoBl.animation.play('bump');
 		danceLeft = !danceLeft;
 
 		if (danceLeft)
