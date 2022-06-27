@@ -28,6 +28,23 @@ class NEWOptionsSubState extends MusicBeatState
 
 	var controlsStrings:Array<String> = [];
 
+	var descriptionStrings:Array<String> = [
+		"change the fps",
+		"when ON, lets you press a key whe you're not supposed to",
+		"toggle between upscroll and downscroll",
+		"toggle middlescroll",
+		"botplay",
+		"show the miss counter",
+		"show the song time",
+		"toggle antialiasing",
+		"???",
+		"toggle between old and new note splashes",
+		"toggle note splashes",
+		"persistent cached data. WARNING (VERY) HIGH RAM USAGE",
+		"dispalce the camera in the direction of the note you hit",
+		"light up cpu strums when the opponent hits a note"
+	];
+
 	var acceptInput:Bool;
 
 	private var grpControls:FlxTypedGroup<Alphabet>;
@@ -49,6 +66,7 @@ class NEWOptionsSubState extends MusicBeatState
 			"change FPS" + "\n" + 
 			(CoolThings.ghost ? 'ghost tapping' : 'no ghost tapping') + "\n" + 
 			(CoolThings.downscroll ? 'Downscroll' : 'Upscroll') + "\n" + 
+			(CoolThings.middlescroll ? 'middlescroll' : 'middlescroll off') + "\n" + 
 			(CoolThings.botplay ? 'Botplay on' : 'Botplay off') + "\n" + 
 			(CoolThings.showMiss ? 'Show Miss Counter' : 'Hide Miss Counter') + "\n" + 
 			(CoolThings.showtime ? 'Show song time' : 'Hide song time') + "\n" +
@@ -56,7 +74,9 @@ class NEWOptionsSubState extends MusicBeatState
 			(CoolThings.secretShh ? 'super secret pause menu ON' : 'super secret pause menu OFF') + "\n" +
 			(CoolThings.newSplash ? 'new splash' : 'old splash') + "\n" +
 			(CoolThings.doSplash ? 'note splash on' : 'note splash off') + "\n" +
-			(CoolThings.persist ? 'Persistent Cached Data ON' : 'Persistent Cached Data OFF'));
+			(CoolThings.persist ? 'Persistent Cached Data ON' : 'Persistent Cached Data OFF') + "\n" + 
+			(CoolThings.displaceCam ? "displace camera" : "do not displace camera") + "\n" +
+			(CoolThings.cpuStrums ? "light up cpu strums" : "cpu strums stay static"));
 		
 		trace(controlsStrings);
 
@@ -141,6 +161,9 @@ class NEWOptionsSubState extends MusicBeatState
 
 		shitText.screenCenter(X);
 
+		if (CoolThings.framerate < 20)
+			CoolThings.framerate = 20;
+
 		camFollowThing.setPosition(FlxMath.lerp(camFollowThing.x, camFollow.x, CoolUtil.boundTo(elapsed * 7.5, 0, 1)), FlxMath.lerp(camFollowThing.y, camFollow.y, CoolUtil.boundTo(elapsed * 7.5, 0, 1)));
 
 		FlxGraphic.defaultPersist = CoolThings.persist;
@@ -178,31 +201,8 @@ class NEWOptionsSubState extends MusicBeatState
 				fpsText.alpha = 0.4;
 			}
 
-			switch (curSelected)
-			{
-				case 0: 
-					shitText.text = "change the fps";
-				case 1: 
-					shitText.text = "when ON, lets you press a key whe you're not supposed to";
-				case 2: 
-					shitText.text = "toggle between upscroll and downscroll";
-				case 3: 
-					shitText.text = "botplay";
-				case 4: 
-					shitText.text = "show the miss counter";
-				case 5: 
-					shitText.text = "show the song time";
-				case 6: 
-					shitText.text = "toggle antialiasing";
-				case 7: 
-					shitText.text = "???";
-				case 8: 
-					shitText.text = "toggle between old and new note splashes";
-				case 9: 
-					shitText.text = "toggle note splashes";
-				case 10: 
-					shitText.text = "persistent cached data. WARNING (VERY) HIGH RAM USAGE";
-			}
+			shitText.text = descriptionStrings[curSelected];
+
 
 			if (controls.BACK)
 				FlxG.switchState(new OtherOptionsSubState());
@@ -271,72 +271,81 @@ class NEWOptionsSubState extends MusicBeatState
 							CoolThings.ghost = !CoolThings.ghost;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.ghost ? 'ghost tapping' : 'no ghost tapping'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 1;
 							grpControls.add(ctrl);
 							trace(CoolThings.ghost);
 						case 2:
 							CoolThings.downscroll = !CoolThings.downscroll;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.downscroll ? "Downscroll" : "Upscroll"), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 2;
 							grpControls.add(ctrl);
 							trace(CoolThings.downscroll);
-						case 3:
+						case 3: 
+							CoolThings.middlescroll = !CoolThings.middlescroll;
+							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.middlescroll ? "middlescroll" : "middlescroll off"), true, false);
+							ctrl.isMenuItem = true;
+							grpControls.add(ctrl);
+							trace(CoolThings.middlescroll);
+						case 4:
 							CoolThings.botplay = !CoolThings.botplay;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.botplay ? 'Botplay on' : 'Botplay off'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 3;
 							grpControls.add(ctrl);
 							trace(CoolThings.botplay);
-						case 4:
+						case 5:
 							CoolThings.showMiss = !CoolThings.showMiss;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.showMiss ? 'Show Miss Counter' : 'Hide Miss Counter'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 4;
 							grpControls.add(ctrl);
 							trace(CoolThings.showMiss);
-						case 5:
+						case 6:
 							CoolThings.showtime = !CoolThings.showtime;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.showtime ? 'Show Song Time' : 'Hide Song Time'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 5;
 							grpControls.add(ctrl);
 							trace(CoolThings.showtime);
-						case 6:
+						case 7:
 							CoolThings.antialiasing = !CoolThings.antialiasing;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.antialiasing ? 'antialiasing' : 'no antialiasing'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 6;
 							grpControls.add(ctrl);
 							trace(CoolThings.antialiasing);
-						case 7:
+						case 8:
 							CoolThings.secretShh = !CoolThings.secretShh;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.secretShh ? 'super secret pause menu ON' : 'super secret pause menu OFF'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 7;
 							grpControls.add(ctrl);
 							trace(CoolThings.secretShh);
-						case 8:
+						case 9:
 							CoolThings.newSplash = !CoolThings.newSplash;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.newSplash ? 'new splash' : 'old splash'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 8;
 							grpControls.add(ctrl);
 							trace(CoolThings.newSplash);
-						case 9:
+						case 10:
 							CoolThings.doSplash = !CoolThings.doSplash;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.doSplash ? 'note splash on' : 'note splash off'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 9;
 							grpControls.add(ctrl);
 							trace(CoolThings.doSplash);
-						case 10:
+						case 11:
 							CoolThings.persist = !CoolThings.persist;
 							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.persist ? 'Persistent Cached Data ON' : 'Persistent Cached Data OFF'), true, false);
 							ctrl.isMenuItem = true;
-							ctrl.targetY = curSelected - 10;
 							grpControls.add(ctrl);
 							trace(CoolThings.persist);
+						case 12:
+							CoolThings.displaceCam = !CoolThings.displaceCam;
+							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.displaceCam ? "displace camera" : "do not displace camera"), true, false);
+							ctrl.isMenuItem = true;
+							grpControls.add(ctrl);
+							trace(CoolThings.displaceCam);
+						case 13: 
+							CoolThings.cpuStrums = !CoolThings.cpuStrums;
+							var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, (CoolThings.cpuStrums ? "light up cpu strums" : "cpu strums stay static"), true, false);
+							ctrl.isMenuItem = true;
+							grpControls.add(ctrl);
+							trace(CoolThings.cpuStrums);
+
 					}
 
 					CoolThings.save();
