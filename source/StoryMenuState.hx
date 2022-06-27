@@ -131,7 +131,7 @@ class StoryMenuState extends MusicBeatState
 		for (i in 0...weekData.length)
 		{
 			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i);
-			weekThing.y += (((weekThing.height + 20) * i));
+			weekThing.y += (((weekThing.height + 20) * (i * 2)));
 			weekThing.targetY = i;
 			grpWeekText.add(weekThing);
 
