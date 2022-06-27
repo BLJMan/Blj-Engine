@@ -13,7 +13,7 @@ love to the funkin' crew and newgrounds ♥
 
 ## Build instructions
 
-is exactly the same as the base game.
+it's exactly the same as the base game.
 
 read the readme [here](https://github.com/ninjamuffin99/Funkin)
 
