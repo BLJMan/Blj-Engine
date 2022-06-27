@@ -167,7 +167,7 @@ class ChartingPlayState extends MusicBeatState
 					else
 						oldNote = null;
 
-					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, daType);
+					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, daType, false);
 					totalNotes ++;
 					swagNote.sustainLength = songNotes[2];
 					swagNote.scrollFactor.set(0, 0);
@@ -181,7 +181,7 @@ class ChartingPlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-						var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
+						var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / (FlxMath.roundDecimal(PlayState.SONG.speed, 2) / 1.95)), daNoteData, oldNote, true, 0, false);
 						totalNotes ++;
 						sustainNote.scrollFactor.set();
 						unspawnNotes.push(sustainNote);
@@ -406,7 +406,7 @@ class ChartingPlayState extends MusicBeatState
 					cpuNoteHit(daNote);
 				}
 
-				if(daNote.mustPress && CoolThings.botplay) 
+				/*if(daNote.mustPress && CoolThings.botplay) 
 				{
 					if (daNote.noteType != 3)
 					{
@@ -422,7 +422,7 @@ class ChartingPlayState extends MusicBeatState
 							goodNoteHit(daNote);
 						}
 					}
-				}
+				}*/
 
 				// WIP interpolation shit? Need to fix the pause issue
 				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
@@ -435,7 +435,7 @@ class ChartingPlayState extends MusicBeatState
 
 				if (killNote)
 				{
-					if (daNote.mustPress && !CoolThings.botplay && !endingSong)
+					if (daNote.mustPress && !endingSong)
 					{
 						if (daNote.tooLate || !daNote.wasGoodHit)
 						{
@@ -739,6 +739,9 @@ class ChartingPlayState extends MusicBeatState
 				}
 	 
 				possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+				//trace(possibleNotes);
+				//trace(directionList);
 	 
 				var dontCheck = false;
 
@@ -747,8 +750,6 @@ class ChartingPlayState extends MusicBeatState
 					if (pressArray[i] && !directionList.contains(i))
 						dontCheck = true;
 				}
-
-				
 
 				if (possibleNotes.length > 0 && !dontCheck)
 				{
@@ -765,7 +766,7 @@ class ChartingPlayState extends MusicBeatState
 
 			}
 			
-			notes.forEachAlive(function(daNote:Note)
+			/*notes.forEachAlive(function(daNote:Note)
 			{
 				if(CoolThings.downscroll && daNote.y > strumLine.y ||
 				!CoolThings.downscroll && daNote.y < strumLine.y)
@@ -782,33 +783,31 @@ class ChartingPlayState extends MusicBeatState
 						
 					}
 				}
-			});
+			});*/
 	 
-			if (!CoolThings.botplay)
+			
+			playerStrums.forEach(function(spr:StrumNote)
 			{
-				playerStrums.forEach(function(spr:StrumNote)
-				{
 
-					if (pressArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
-					{
-						spr.playAnim('pressed');
-						//spr.resetAnim = 0;
-					}
-					if (!holdArray[spr.ID])
-					{
-						spr.playAnim('static');
-						//spr.resetAnim = 0;
-					}	 
-					if (spr.animation.curAnim.name == 'confirm' && !PlayState.isPixelArrows)
-					{
-						spr.centerOffsets();
-						spr.offset.x -= 13;
-						spr.offset.y -= 13;
-					}
-					else
-						spr.centerOffsets();
-				});
-			}
+				if (pressArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
+				{
+					spr.playAnim('pressed');
+					//spr.resetAnim = 0;
+				}
+				if (!holdArray[spr.ID])
+				{
+					spr.playAnim('static');
+					//spr.resetAnim = 0;
+				}	 
+				if (spr.animation.curAnim.name == 'confirm' && !PlayState.isPixelArrows)
+				{
+					spr.centerOffsets();
+					spr.offset.x -= 13;
+					spr.offset.y -= 13;
+				}
+				else
+					spr.centerOffsets();
+			});
 	}
 
 	
@@ -887,6 +886,23 @@ class ChartingPlayState extends MusicBeatState
 			notes.remove(note, true);
 			note.destroy();
 		}
+	}
+
+	override public function onFocus():Void
+	{
+		super.onFocus();
+
+		FlxG.sound.music.play();
+		vocals.play();
+	}
+	
+	override public function onFocusLost():Void
+	{
+		
+		FlxG.sound.music.pause();
+		vocals.pause();
+
+		super.onFocusLost();
 	}
 
 
