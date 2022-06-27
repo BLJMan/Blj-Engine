@@ -1,5 +1,6 @@
 package;
 
+import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -20,6 +21,7 @@ class Note extends FlxSprite
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
+	public var botCanHit:Bool = false;
 	public var ignoreNote:Bool = false;
 	public var prevNote:Note;
 
@@ -142,6 +144,7 @@ class Note extends FlxSprite
 					antialiasing = true;
 				}
 
+
 				default: 
 				{
 					frames = Paths.getSparrowAtlas('UI/NOTE_assets');
@@ -166,7 +169,26 @@ class Note extends FlxSprite
 					antialiasing = CoolThings.antialiasing;
 				}
 			}
+
+			if (editor)
+			{
+				if (noteType == 1) 
+				{
+					frames = Paths.getSparrowAtlas('UI/NOTE_assets_bruh');
+
+					animation.addByPrefix('greenScroll', 'green0');
+					animation.addByPrefix('redScroll', 'red0');
+					animation.addByPrefix('blueScroll', 'blue0');
+					animation.addByPrefix('purpleScroll', 'purple0');
+
+					setGraphicSize(Std.int(width * 0.7));
+					updateHitbox();
+					antialiasing = CoolThings.antialiasing;
+				}
+			}
 		}
+
+		
 
 		switch (noteData)
 		{
@@ -226,6 +248,7 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 
+
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
@@ -233,12 +256,17 @@ class Note extends FlxSprite
 				if (CoolThings.downscroll && sustainNote) 
 					flipY = true;
 			}
-		}
+		} 
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (y < FlxG.height)
+			visible = true; 
+		else 
+			visible = false;
 
 		if (mustPress)
 		{
@@ -251,6 +279,11 @@ class Note extends FlxSprite
 
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
 				tooLate = true;
+
+			if (strumTime <= Conductor.songPosition)
+			{
+				botCanHit = true;
+			}
 		}
 		else
 		{
