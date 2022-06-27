@@ -333,7 +333,7 @@ class ModchartState
 				setVar("followYOffset",0);
 	
 				setVar("showOnlyStrums", false);
-				setVar("hideUpperHUD", false);
+				setVar("hideTimeAndRating", false);
 				setVar("strumLine1Visible", true);
 				setVar("strumLine2Visible", true);
 	
