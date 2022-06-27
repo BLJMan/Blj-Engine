@@ -16,16 +16,16 @@ class StrumNote extends FlxSprite
 
 	private var player:Int;
 
-	public function new(x:Float, y:Float, leData:Int, player:Int) {
+	public function new(x:Float, y:Float, leData:Int, player:Int) 
+	{
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 		noteData = leData;
 		isPixelStage = PlayState.isPixelArrows;
+		
 		this.player = player;
 		this.noteData = leData;
 		super(x, y);
-
-		var skin:String = 'NOTE_assets';
 
 		if (isPixelStage)
 		{
@@ -101,7 +101,12 @@ class StrumNote extends FlxSprite
 		playAnim('static');
 		x += Note.swagWidth * noteData;
 		x += 100;
-		x += ((FlxG.width / 2) * player);
+
+		if (CoolThings.middlescroll)
+			x += (FlxG.width / 2) - (Note.swagWidth * 2) - 100;
+		else 
+			x += ((FlxG.width / 2) * player);
+
 		ID = noteData;
 	}
 
@@ -117,21 +122,11 @@ class StrumNote extends FlxSprite
 			}
 		}
 
-
-		/*if (PlayState.curStage == 'school' || PlayState.curStage == 'schoolEvil')
-			isPixelStage = true;
-		else 
-			isPixelStage = false;*/
-		
-		/*if(animation.curAnim.name == 'confirm' && !isPixelStage) 
-		{
-			updateConfirmOffset();
-		}*/
-
 		super.update(elapsed);
 	}
 
-	public function playAnim(anim:String, ?force:Bool = false) {
+	public function playAnim(anim:String, ?force:Bool = false) 
+	{
 		animation.play(anim, force);
 		centerOffsets();
 		if(animation.curAnim == null || animation.curAnim.name == 'static') 
@@ -145,13 +140,15 @@ class StrumNote extends FlxSprite
 			colorSwap.saturation = CoolUtil.arrowHSV[noteData % 4][1] / 100;
 			colorSwap.brightness = CoolUtil.arrowHSV[noteData % 4][2] / 100;
 
-			if(animation.curAnim.name == 'confirm' && !isPixelStage) {
+			if(animation.curAnim.name == 'confirm' && !isPixelStage) 
+			{
 				updateConfirmOffset();
 			}
 		}
 	}
 
-	function updateConfirmOffset() { //TO DO: Find a calc to make the offset work fine on other angles
+	function updateConfirmOffset() 
+	{ 
 		centerOffsets();
 		offset.x -= 13;
 		offset.y -= 13;
