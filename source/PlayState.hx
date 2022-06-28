@@ -2420,11 +2420,12 @@ class PlayState extends MusicBeatState
 			for (event in dummyEvents)
 			{
 				var daStep:Float = event.position;
+				var daPos = event.visPos.split(",");
 				var daVal1:Float = event.value1;
 				var daVal2:String = event.value2;
 				var daType = event.type;
 
-				if (curStep == daStep)
+				if (Conductor.songPosition >= Std.parseFloat(daPos[0]))
 				{
 					trace("WOAH WTF ITS ACTUALLY WORKIN");
 					switch (daType)
