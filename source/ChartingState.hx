@@ -1362,6 +1362,10 @@ class ChartingState extends MusicBeatState
 		_song.events = [];
 	}
 
+	function snapToStep()
+	{
+		
+	}
 	function clearSong():Void
 	{
 		for (daSection in 0..._song.notes.length)
