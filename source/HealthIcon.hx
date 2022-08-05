@@ -58,6 +58,10 @@ class HealthIcon extends FlxSprite
 		animation.add("exe", [10, 11], 0, false, isPlayer);
 		animation.add("hypno_MX", [24, 24], 0, false, isPlayer);
 		animation.add("lord-x", [24, 24], 0, false, isPlayer);
+		animation.add("hate-you", [10, 11], 0, false, isPlayer);
+		animation.add("MarioLand", [24, 24], 0, false, isPlayer);
+		animation.add("MarioLandCrazy", [24, 24], 0, false, isPlayer);
+		animation.add("bfgb", [24, 24], 0, false, isPlayer);
 		animation.play(char);
 		scrollFactor.set();
 	}
