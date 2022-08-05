@@ -159,6 +159,7 @@ class ChartingState extends MusicBeatState
 				events: [],
 				bpm: 150,
 				needsVoices: true,
+				gfVisible: true,
 				player1: 'bf',
 				player2: 'dad',
 				gf: "gf",
@@ -280,6 +281,7 @@ class ChartingState extends MusicBeatState
 	var player2DropDown:FlxUIDropDownMenuCustom;
 	var gfDropDown:FlxUIDropDownMenuCustom;
 	var arrowDropDown:FlxUIDropDownMenuCustom;
+	var stageDropDown:FlxUIDropDownMenuCustom;
 
 	var clearAllButton:FlxButton;
 
@@ -307,6 +309,13 @@ class ChartingState extends MusicBeatState
 				vol = 0;
 
 			FlxG.sound.music.volume = vol;
+		};
+
+		var check_gf_visible = new FlxUICheckBox(10, 220, null, null, "gf visible?", 100);
+		check_gf_visible.checked = _song.gfVisible;
+		check_gf_visible.callback = function()
+		{
+			_song.gfVisible = check_gf_visible.checked;
 		};
 
 		var saveButton:FlxButton = new FlxButton(110, 8, "Save", function()
@@ -348,7 +357,7 @@ class ChartingState extends MusicBeatState
 		});
 		player1DropDown.selectedLabel = _song.player1;
 
-		player2DropDown = new FlxUIDropDownMenuCustom(140, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
+		player2DropDown = new FlxUIDropDownMenuCustom(150, 100, FlxUIDropDownMenuCustom.makeStrIdLabelArray(characters, true), function(character:String)
 		{
 			_song.player2 = characters[Std.parseInt(character)];
 		});
@@ -363,6 +372,11 @@ class ChartingState extends MusicBeatState
 			_song.arrows = arrowVersions[Std.parseInt(arrowVerion)];
 		});
 
+		stageDropDown = new FlxUIDropDownMenuCustom(150, 250, FlxUIDropDownMenuCustom.makeStrIdLabelArray(CoolThings.stages, true), function(stage:String)
+		{
+			_song.stage = CoolThings.stages[Std.parseInt(stage)]; 
+		});
+
 		clearAllButton = new FlxButton(10, 150, "Clear ALL", function()
 		{
 			clearSong();
@@ -370,25 +384,28 @@ class ChartingState extends MusicBeatState
 
 		player2DropDown.selectedLabel = _song.player2;
 		gfDropDown.selectedLabel = _song.gf;
-		gfDropDown.selectedLabel = _song.arrows;
+		arrowDropDown.selectedLabel = _song.arrows;
+		stageDropDown.selectedLabel = _song.stage;
 
 		var tab_group_song = new FlxUI(null, UI_box);
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
 
-		var daText = new FlxText(5, 260, 0, "dropDown to the left is bf \ndropDown to the right is the opponent \nthe other one is girlfriend \n\nthe last one is the note skin\n\n", 10);
+		var daText = new FlxText(5, 280, 0, "dropDown to the left is bf \ndropDown to the right is the opponent \nthe other one is girlfriend \nthe next one is the note skin\n\nthe last one is the stage\n\n", 10);
 		daText.antialiasing = true;
 
 		tab_group_song.add(clearAllButton);
 		tab_group_song.add(daText);
 		tab_group_song.add(check_voices);
 		tab_group_song.add(check_mute_inst);
+		tab_group_song.add(check_gf_visible);
 		tab_group_song.add(saveButton);
 		tab_group_song.add(reloadSong);
 		tab_group_song.add(reloadSongJson);
 		tab_group_song.add(loadAutosaveBtn);
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
+		tab_group_song.add(stageDropDown);
 		tab_group_song.add(player1DropDown);
 		tab_group_song.add(arrowDropDown);
 		tab_group_song.add(gfDropDown);
@@ -555,14 +572,14 @@ class ChartingState extends MusicBeatState
 		var daText = new FlxText(5, 260, 0, "ok hear me out \nselect an event from the dropDown\ninsert the values from the list below \nclick add event. \nthis autosaves the chart, so if for some reason \nthe events don't load when opening the editor \ntry clicking 'load events'.\n\n\n
 		BPMChange-> val1: new BPM\n
 		speedChange-> val1: new speed\n
-		characterChange-> val1: player(dad, bf, gf), val2: switch to (new Char. name - ex. 'senpai-angry')\n
-		playAnim-> val1: player (1=dad, 2=bf, 3=gf), val2: animName\n
+		characterChange-> val1: player(1-dad, 2-bf, 3-gf), val2: switch to (new Char. name)\n
+		playAnim-> val1: player (1-dad, 2-bf, 3-gf), val2: animName\n
 		addZoom-> val1: camGame zoom, val2: camHUD zoom\n
 		switchPos is broken and obsolete\n
 		setDefCamZoom-> val1: new default cam zoom\n
-		shakeCam-> val1: camera (1=game, 2=HUD), val2: INTENSITY,DURATION !make sure to put the comma and no spaces!\n
-		hideHUD-> val1: 0=hide strums, 1=hide health, 2=all, val2: ALPHA,DURATION !same thing as above!\n
-		camFocus-> val1: on which character(0=dad, 1=bf, 2=gf, 3=normal), val2: addX,addY (add to char. position)\n
+		shakeCam-> val1: camera (0-game, 1-HUD), val2: INTENSITY,DURATION !make sure to put the comma and no spaces!\n
+		hideHUD-> val1: 0-hide strums, 1-hide health, 2-all, val2: ALPHA,DURATION !same thing as above!\n
+		camFocus-> val1: on which character(0-dad, 1-bf, 2-gf, 3-normal), val2: addX,addY (add to char. position)\n
 		if you use camFocus, you'll have to use it again with val1 = 3 to unfreeze the camera!\n\n
 		if you don't see something on this list then it requires no extra values\n\n", 9);
 
@@ -747,7 +764,7 @@ class ChartingState extends MusicBeatState
 
 		if (!typingShit.hasFocus && !eventVal1.hasFocus && !eventVal2.hasFocus && !eventType.dropPanel.visible 
 			&& !player1DropDown.dropPanel.visible && !player2DropDown.dropPanel.visible && !gfDropDown.dropPanel.visible 
-			&& !arrowDropDown.dropPanel.visible) //i am so sorry
+			&& !arrowDropDown.dropPanel.visible && !stageDropDown.dropPanel.visible) //i am so sorry
 		{
 			isTyping = false;
 			buttons(true);
