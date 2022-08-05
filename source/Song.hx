@@ -6,6 +6,11 @@ import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
 
+#if windows
+import Sys;
+import sys.FileSystem;
+#end
+
 using StringTools;
 
 typedef SwagSong =
@@ -15,6 +20,7 @@ typedef SwagSong =
 	var events:Array<SwagEvent>;
 	var bpm:Int;
 	var needsVoices:Bool;
+	var gfVisible:Bool; 
 	var speed:Float;
 
 	var player1:String;
@@ -34,6 +40,7 @@ class Song
 	public var events:Array<SwagEvent>;
 	public var bpm:Int;
 	public var needsVoices:Bool = true;
+	public var gfVisible:Bool = true; 
 	public var speed:Float = 1;
 
 	public var player1:String = 'bf';
@@ -52,7 +59,42 @@ class Song
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson:String;
+		var daSong = Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase());
+		trace(daSong);
+
+		#if windows//no you don't crash now fuck you
+		if (FileSystem.exists(daSong))
+		{
+			trace(1);
+			rawJson = Assets.getText(daSong).trim();
+		}
+		else 
+		{
+			if (FileSystem.exists(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "")))
+			{
+				trace("2");
+				rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "")).trim();
+			}
+			else if (FileSystem.exists(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "-easy")))
+			{
+				trace("3");
+				rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "-easy")).trim();//i am so sorry for all of this, might redo it later
+			}
+			else if (FileSystem.exists(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "-hard")))
+			{
+				trace("4");
+				rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + folder.toLowerCase() + "-hard")).trim();
+			}
+			else 
+			{
+				trace("5");
+				rawJson = Assets.getText(Paths.json("tutorial" + '/' + "tutorial"));
+			}
+		}
+		#else 
+		rawJson = Assets.getText(daSong).trim();
+		#end
 
 		while (!rawJson.endsWith("}"))
 		{
