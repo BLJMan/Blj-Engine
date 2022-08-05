@@ -32,7 +32,7 @@ class StoryMenuState extends MusicBeatState
 		['Senpai', 'Roses', 'Thorns'],
 		["Ugh", "Guns", "Stress"]
 	];
-	var curDifficulty:Int = 1;
+	var curDifficulty = CoolThings.storyCurDiff;
 
 	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true, true];
 
@@ -60,7 +60,7 @@ class StoryMenuState extends MusicBeatState
 
 	var txtWeekTitle:FlxText;
 
-	var curWeek:Int = 0;
+	var curWeek = CoolThings.storyCurSelected;
 
 	var txtTracklist:FlxText;
 
@@ -209,12 +209,15 @@ class StoryMenuState extends MusicBeatState
 
 		trace("Line 165");
 
+		changeWeek();
+
 		//grpWeekCharacters.members[1].bopHead();
 		//grpWeekCharacters.members[2].bopHead();
 
 		Conductor.changeBPM(102);
 
 		super.create();
+
 	}
 
 	override function update(elapsed:Float)
@@ -349,6 +352,7 @@ class StoryMenuState extends MusicBeatState
 	function changeDifficulty(change:Int = 0):Void
 	{
 		curDifficulty += change;
+		CoolThings.storyCurDiff = curDifficulty;
 
 		if (curDifficulty < 0)
 			curDifficulty = 2;
@@ -389,6 +393,7 @@ class StoryMenuState extends MusicBeatState
 	function changeWeek(change:Int = 0):Void
 	{
 		curWeek += change;
+		CoolThings.storyCurSelected = curWeek;
 
 		if (curWeek >= weekData.length)
 			curWeek = 0;
@@ -419,8 +424,6 @@ class StoryMenuState extends MusicBeatState
 		grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
 
 		//grpWeekCharacters.members[0].bopHead();
-		
-
 
 		/*grpWeekCharacters.members[0].bopHead();
 		grpWeekCharacters.members[1].bopHead();

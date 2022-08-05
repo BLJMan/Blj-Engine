@@ -48,7 +48,7 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		FlxG.save.data.restarted = false;
+		CoolThings.restarted = false;
 		PlayState.freeplayShit = false;
 
 		animOffsets = new Map<String, Array<Dynamic>>();
@@ -58,20 +58,9 @@ class MainMenuState extends MusicBeatState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
+		PlayerSettings.player1.controls.loadKeyBinds();
+
 		FlxG.mouse.visible = false;
-
-		if (FlxG.save.data.FPS == null)
-		{
-			FlxG.save.data.FPS = 120;
-		}
-
-		if (FlxG.save.data.downscroll == null)
-		{
-			FlxG.save.data.downscroll = false;
-		}
-
-		if (FlxG.save.data.scrollSpeed == null)
-			FlxG.save.data.scrollSpeed = 1;
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -128,9 +117,6 @@ class MainMenuState extends MusicBeatState
 
 		// NG.core.calls.event.logEvent('swag').send();
 
-		if (FlxG.save.data.dfjk == null)
-			FlxG.save.data.dfjk = true;
-
 		if (FlxG.save.data.upBind == null)
 			FlxG.save.data.upBind = "W";
 
@@ -146,18 +132,8 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.save.data.killBind == null)
 			FlxG.save.data.killBind = "R";
 
-		
-
 		FlxG.save.flush();
 
-		//keyShit.saveKeys();
-		PlayerSettings.player1.controls.loadKeyBinds();
-
-		/*if (FlxG.save.data.dfjk)
-			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
-		else
-			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-		*/
 		trace(FlxG.save.data.dfjk);
 		
 		changeItem();
@@ -197,8 +173,6 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.keys.justPressed.V)
-			FlxG.switchState(new LatencyState());
 		if (FlxG.keys.justPressed.F)
 		{
 			FlxG.fullscreen = !FlxG.fullscreen;
@@ -206,27 +180,10 @@ class MainMenuState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.Q)
 		{
-			menuItems.forEach(function(spr:FlxSprite)
-			{
-				spr.offset.set(0, 200);
-			});
+
 		}
 
 		camFollowThing.setPosition(FlxMath.lerp(camFollowThing.x, camFollow.x, CoolUtil.boundTo(elapsed * 7.5, 0, 1)), FlxMath.lerp(camFollowThing.y, camFollow.y, CoolUtil.boundTo(elapsed * 7.5, 0, 1)));
-		
-		//keyShit.saveKeys();
-
-		/*if (FlxG.keys.pressed.RIGHT)
-		{
-			FlxG.save.data.offset++;
-			trace(FlxG.save.data.offset);
-		}
-
-		if (FlxG.keys.pressed.LEFT)
-		{
-			FlxG.save.data.offset--;
-			trace(FlxG.save.data.offset);
-		}*/
 
 		if (FlxG.sound.music.volume < 0.8)
 		{
@@ -300,13 +257,8 @@ class MainMenuState extends MusicBeatState
 										trace("Story Menu Selected");
 									case 'freeplay':
 										FlxG.switchState(new FreeplayState());
-
 										trace("Freeplay Menu Selected");
-
 									case 'options':
-										//FlxTransitionableState.skipNextTransIn = true;
-										//FlxTransitionableState.skipNextTransOut = true;
-										//FlxG.switchState(new OptionsMenu());
 										FlxG.switchState(new OtherOptionsSubState());
 								}
 							});
@@ -343,11 +295,6 @@ class MainMenuState extends MusicBeatState
 			if (spr.ID == curSelected)
 			{
 				spr.animation.play('selected');
-				/*if (curSelected == 0)
-					spr.offset.set(70, 25);
-				else if (curSelected == 2)
-					spr.offset.set(65, 25);
-				else */
 				if (curSelected == 3)
 					spr.offset.set(0, 30);
 				else 
@@ -357,12 +304,8 @@ class MainMenuState extends MusicBeatState
 				
 			}
 
-			//spr.offset.set(567, -2000);
-
 			spr.width = Math.abs(spr.scale.x) * spr.frameWidth;
 			spr.height = Math.abs(spr.scale.y) * spr.frameHeight;
-
-			//spr.updateHitbox();
 		});
 	}
 }
