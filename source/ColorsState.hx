@@ -7,7 +7,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-class ColorsSubState extends MusicBeatSubstate
+class ColorsState extends MusicBeatState
 {
     private var grpNotes:FlxTypedGroup<FlxSprite>;
     private var grpNumbers:FlxTypedGroup<Alphabet>;
@@ -191,7 +191,7 @@ class ColorsSubState extends MusicBeatSubstate
 				grpNotes.forEachAlive(function(spr:FlxSprite) {
 					spr.alpha = 0;
 				});
-				close();
+				FlxG.switchState(new OtherOptionsSubState());
 			}
 			changingNote = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));

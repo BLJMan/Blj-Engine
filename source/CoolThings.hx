@@ -5,6 +5,18 @@ import flixel.FlxG;
 class CoolThings
 {
     public static var diffScrollType:Bool = false;
+    public static var playstateSong:String = "";
+    public static var hitsounds:Bool;
+    public static var stages:Array<String> = 
+    ["stage", "spooky", "philly", "limo", "mall", "mallEvil", "school", "schoolEvil", "tankStage", "murder", 
+    "sonicfunStage", "sonicexeStage", "troubleStage", "mountains", "gamble", "well", "gasterStage", "i hate you", "mario-land"];
+    public static var restarted:Bool;
+
+    public static var freeplayCurSelected:Int = 0;
+    public static var freeplayCurDiff:Int = 1;
+
+    public static var storyCurSelected:Int = 0;
+    public static var storyCurDiff:Int = 1;
     //--------------------------------------------------------
     public static var botplay:Bool;
     public static var antialiasing:Bool;
@@ -66,6 +78,9 @@ class CoolThings
         if (FlxG.save.data.cpu != null)
             cpuStrums = FlxG.save.data.cpu;
 
+        if (FlxG.save.data.hitsounds != null)
+            hitsounds = FlxG.save.data.hitsounds;
+
         #if !html5
             if (FlxG.save.data.FPS != null && FlxG.save.data.FPS > 10 && FlxG.save.data.FPS < 910)
             {
@@ -121,6 +136,8 @@ class CoolThings
         if (FlxG.save.data.cpu == null)
             FlxG.save.data.cpu = true;
 
+        if (FlxG.save.data.hitsounds == null)
+            FlxG.save.data.hitsounds = false;
         
         if (FlxG.save.data.FPS == null)
         {
@@ -145,6 +162,7 @@ class CoolThings
         FlxG.save.data.FPS = framerate;
         FlxG.save.data.displace = displaceCam;
         FlxG.save.data.cpu = cpuStrums;
+        FlxG.save.data.hitsounds = hitsounds;
 
         FlxG.save.flush();
     }

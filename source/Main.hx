@@ -1,5 +1,7 @@
 package;
 
+import flixel.graphics.FlxGraphic;
+import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -77,7 +79,7 @@ class Main extends Sprite
 		#end
 	}
 
-	public static function dumpCache() // THIS ENGINE IS NOT OPTIMIZED AAAA IT CAN USE UP TO 9 FUCKING  G Y G A B Y T E S  OF RAM | update: NO NEED 4 DIS ANYMORE hehe
+	public static function dumpCache() // THIS ENGINE IS NOT OPTIMIZED AAAA IT CAN USE UP TO 9 FUCKING  G Y G A B Y T E S  OF RAM | update: NO NEED 4 THIS ANYMORE hehe
 	{
 		@:privateAccess
 		for (key in FlxG.bitmap._cache.keys())
@@ -90,9 +92,15 @@ class Main extends Sprite
 				obj.destroy();
 			}
 		}
-		Assets.cache.clear("songs");
+		//Assets.cache.clear("songs");
+		System.gc();
 		trace("DUMPED CACHE YAY");
 	}
 
+
 	//update: it's kinda optimized now??? still laggy for some reason
+
+	//I DID IT!! I MADE THE GAME USE 26 GYGABYTES OF RAM!!!
+
+	//so uh might've optimized the input a bit? maybe?
 }

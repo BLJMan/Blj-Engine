@@ -24,7 +24,6 @@ using StringTools;
 
 class KeyBindMenu extends MusicBeatState
 {
-
     var keyTextDisplay:FlxText;
     var keyWarning:FlxText;
     var warningTween:FlxTween;
@@ -32,12 +31,7 @@ class KeyBindMenu extends MusicBeatState
     var defaultKeys:Array<String> = ["A", "S", "W", "D", "R"];
     var curSelected:Int = 0;
 
-
-    var keys:Array<String> = [FlxG.save.data.leftBind,
-                              FlxG.save.data.downBind,
-                              FlxG.save.data.upBind,
-                              FlxG.save.data.rightBind,
-                              FlxG.save.data.killBind];
+    var keys:Array<String> = [FlxG.save.data.leftBind, FlxG.save.data.downBind, FlxG.save.data.upBind, FlxG.save.data.rightBind, FlxG.save.data.killBind];
 
     var tempKey:String = "";
     var blacklist:Array<String> = ["ESCAPE", "ENTER", "BACKSPACE", "SPACE"];
@@ -45,9 +39,7 @@ class KeyBindMenu extends MusicBeatState
     var state:String = "select";
 
 	override function create()
-	{	
-
-	
+	{
 		//FlxG.sound.playMusic('assets/music/configurator' + TitleState.soundExt);
 
 		persistentUpdate = persistentDraw = true;
@@ -179,7 +171,6 @@ class KeyBindMenu extends MusicBeatState
             var textStart = (i == curSelected) ? ">" : "  ";
             keyTextDisplay.text += textStart + keyText[i] + ": " + ((keys[i] != keyText[i]) ? (keys[i]) : "" ) + " \n";
             keyTextDisplay.antialiasing = false;
-
         }
 
         var textStart = (curSelected == 4) ? ">" : "  ";
@@ -187,7 +178,6 @@ class KeyBindMenu extends MusicBeatState
         keyTextDisplay.text += textStart + "RESET: " + keys[4]  + "\n";
 
         keyTextDisplay.screenCenter();
-
     }
 
     public function saveKeys(){
@@ -201,7 +191,6 @@ class KeyBindMenu extends MusicBeatState
         FlxG.save.flush();
 
         PlayerSettings.player1.controls.loadKeyBinds();
-
     }
 
     function reset(){
@@ -213,7 +202,6 @@ class KeyBindMenu extends MusicBeatState
         saveKeys();
 
         FlxG.switchState(new OtherOptionsSubState());
-
     }
 
     function quit(){

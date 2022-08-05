@@ -161,8 +161,8 @@ class NEWOptionsSubState extends MusicBeatState
 
 		shitText.screenCenter(X);
 
-		if (CoolThings.framerate < 20)
-			CoolThings.framerate = 20;
+		if (CoolThings.framerate < 10)
+			CoolThings.framerate = 10;
 
 		camFollowThing.setPosition(FlxMath.lerp(camFollowThing.x, camFollow.x, CoolUtil.boundTo(elapsed * 7.5, 0, 1)), FlxMath.lerp(camFollowThing.y, camFollow.y, CoolUtil.boundTo(elapsed * 7.5, 0, 1)));
 

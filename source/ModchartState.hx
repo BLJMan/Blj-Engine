@@ -345,10 +345,6 @@ class ModchartState
 				setVar("mustHit", false);
 
 				setVar("strumLineY", PlayState.instance.strumLine.y);
-				
-				// callbacks
-	
-				// sprites
 	
 				Lua_helper.add_callback(lua,"makeSprite", makeLuaSprite);
 	

@@ -14,6 +14,31 @@ class CoolUtil
 		['Hard', '-hard']
 	];
 
+	public static var ogSongs:Array<String> = [
+		"tutorial",
+		"bopeebo",
+		"fresh",
+		"dadbattle",
+		"spookez",
+		"south",
+		"monster",
+		"pico",
+		"philly",
+		"blammed",
+		"satin-panties",
+		"high",
+		"milf",
+		"cocoa",
+		"eggnog",
+		"winter-horrorland",
+		"senpai",
+		"roses",
+		"thorns",
+		"ugh",
+		"guns",
+		"stress"
+	];
+
 	//public static var thing = openfl.Assets.getText("assets/data/arrowHSV.txt");
 
 	public static var arrowHSV:Array<Array<Int>> = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
