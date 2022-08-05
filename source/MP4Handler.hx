@@ -15,6 +15,8 @@ import flixel.FlxSprite;
 // THIS IS FOR TESTING
 // DONT STEAL MY CODE >:(
 
+//i think i just did. -blj
+
 class MP4Handler
 {
 	public static var video:Video;
@@ -135,7 +137,7 @@ class MP4Handler
 
 		trace("Big, Big Chungus, Big Chungus!");
 
-		new FlxTimer().start(0.3, function (tmr:FlxTimer)
+		new FlxTimer().start(0.4, function (tmr:FlxTimer)
 		{
 			if (finishCallback != null)
 			{
