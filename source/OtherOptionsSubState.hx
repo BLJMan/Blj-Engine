@@ -24,7 +24,11 @@ class OtherOptionsSubState extends MusicBeatState
 
 	var camFollow:FlxObject;
 
-	var menuItems:Array<String> = ['preferences', 'controls', 'about', 'exit'];
+	#if debug
+	var menuItems:Array<String> = ['preferences', 'controls', 'credits', "colors", "notes", 'exit'];
+	#else
+	var menuItems:Array<String> = ['preferences', 'controls', 'credits', 'exit'];
+	#end
 
 	var notice:FlxText;
 
@@ -53,8 +57,6 @@ class OtherOptionsSubState extends MusicBeatState
 			//controlLabel.isMenuItem = true;
 			//controlLabel.targetY = i;
 			grpControls.add(controlLabel);
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			
 		}
 
 		changeSelection();
@@ -68,37 +70,16 @@ class OtherOptionsSubState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-
 		if (FlxG.keys.justPressed.SEVEN)
-			openSubState(new ColorsSubState());
+			FlxG.switchState(new ColorsState());
 		
 		super.update(elapsed);
+		
 		if (controls.ACCEPT)
 		{
 			canChange = false;
 			
 			FlxG.sound.play(Paths.sound('confirmMenu'));
-
-			/*var daSelected:String = menuItems[curSelected];
-
-			new FlxTimer().start(0.5, function(_)
-			{
-				switch (daSelected)
-				{
-					case "preferences":
-						FlxG.switchState(new NEWOptionsSubState());
-					case "controls":
-						FlxG.switchState(new KeyBindMenu());
-					case "colors": 
-						openSubState(new ColorsSubState());
-					case "about":
-						FlxG.switchState(new AboutSubState());
-					case "notes":
-						FlxG.switchState(new ChangeNotesState());
-					case "exit":
-						FlxG.switchState(new MainMenuState());
-				}
-			});*/
 
 			grpControls.forEach(function(shit:MenuOptionItem) 
 			{
@@ -114,8 +95,8 @@ class OtherOptionsSubState extends MusicBeatState
 							case "controls":
 								FlxG.switchState(new KeyBindMenu());
 							case "colors": 
-								openSubState(new ColorsSubState());
-							case "about":
+								FlxG.switchState(new ColorsState());
+							case "credits":
 								FlxG.switchState(new AboutSubState());
 							case "notes":
 								FlxG.switchState(new ChangeNotesState());
