@@ -1,20 +1,23 @@
 -------extra-songs
-haxxer
+haxxer--vs. Doxxie
 megalo-strike-back
-sussus-toogus
-lo-fight
-overhead
-ballistic
-onslaught
-run
-obsolete
-hark
+sussus-toogus--vs. Impostor
+lo-fight--vs. Whitty
+overhead--vs. Whitty
+ballistic--vs. Whitty
+onslaught--vs. Bob
+run--vs. Bob
+obsolete--WeegeeInvasion
+hark--Holiday Mod Pt.2
 bb
-relighted
-challengedd
-too-slow
-you-cant-run
-triple-trouble
-endless
-black-sun
+relighted--The X Event
+challengedd--FNF VS.
+too-slow--vs. Sonic.exe
+you-cant-run--vs. Sonic.exe
+triple-trouble--vs. Sonic.exe
+endless--vs. Sonic.exe
+black-sun--vs. Sonic.exe
 pasta-night
+rush-e
+i-hate-you--Mario's Madness
+golden-land--Mario's Madness

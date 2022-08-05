@@ -2,6 +2,7 @@ gf
 gf-christmas
 gf-car
 gf-pixel
+gf-IHY
 dad
 spooky
 mom
@@ -43,3 +44,7 @@ exe
 hypno_MX
 lord-x
 hypno
+hate-you
+MarioLand
+MarioLandCrazy
+bfgb

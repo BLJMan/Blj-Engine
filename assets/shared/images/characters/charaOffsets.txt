@@ -1,7 +1,0 @@
-idle 0 0
-singUP 0 3
-singRIGHT 0 4
-singLEFT -1 -1
-singDOWN 12 -8
-zrick 0 0
-zave -2 0

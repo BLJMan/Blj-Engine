@@ -1,0 +1,7 @@
+idle 0 0
+singUP 44 48
+singRIGHT -19 -31
+singLEFT 99 -14
+singDOWN 84 -102
+ughAnim -12 -10
+prettyGoodAnim 3 14
