@@ -308,7 +308,8 @@ class Alphabet extends FlxSpriteGroup
 				letter.x += 90;
 
 				if(tmr != null) {
-					if(dialogueSound != null) dialogueSound.stop();
+					if(dialogueSound != null) 
+						dialogueSound.stop();
 					dialogueSound = FlxG.sound.play(Paths.sound('dialogue'));
 				}
 
